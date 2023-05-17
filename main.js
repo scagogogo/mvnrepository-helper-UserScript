@@ -53,7 +53,7 @@
             return;
         }
 
-        // 保存历史记录，保存分割之前的，不然要手动清除很麻烦 
+        // 保存历史记录，保存分割之前的，不然要手动清除很麻烦
         localStorage.setItem(historyLocalStorageKey, JSON.stringify({
             groupId,
             articleId,
