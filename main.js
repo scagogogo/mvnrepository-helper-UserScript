@@ -53,6 +53,13 @@
             return;
         }
 
+        // 保存历史记录，保存分割之前的，不然要手动清除很麻烦 
+        localStorage.setItem(historyLocalStorageKey, JSON.stringify({
+            groupId,
+            articleId,
+            version,
+        }));
+
         // 如果Group ID是冒号的话则将其拆分一下
         if (groupId.indexOf(":") !== -1) {
             let split = groupId.split(":", 2);
@@ -61,13 +68,6 @@
                 articleId = split[1]
             }
         }
-
-        // 保存历史记录
-        localStorage.setItem(historyLocalStorageKey, JSON.stringify({
-            groupId,
-            articleId,
-            version,
-        }));
 
         // 组装URL，开始跳转
         // let targetUrl = `https://repo1.maven.org/maven2/tiffrenderer/tiffrenderer/0.9/`
