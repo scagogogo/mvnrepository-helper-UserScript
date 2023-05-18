@@ -61,11 +61,15 @@
         }));
 
         // 如果Group ID是冒号的话则将其拆分一下
+        // 支持直接在GroupID中输入： org.apache.maven.plugins:maven-dependency-plugin:3.5.0 这种形式
         if (groupId.indexOf(":") !== -1) {
-            let split = groupId.split(":", 2);
+            let split = groupId.split(":", 3);
             groupId = split[0]
-            if (split.length === 2 && !articleId) {
+            if (split.length >= 2 && !articleId) {
                 articleId = split[1]
+            }
+            if (split.length >= 3 && !version) {
+                version = split[2]
             }
         }
 
