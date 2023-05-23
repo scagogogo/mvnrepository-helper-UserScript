@@ -94,5 +94,53 @@
         $("#version").val(lastInput["version"]);
     }
 
+    // 如果有出现a连接中文字过长被折叠的情况，则将其还原
+    // 比如： https://repo1.maven.org/maven2/org/wso2/carbon/apimgt/org.wso2.carbon.apimgt.hostobjects.oidc.feature/6.5.348/
+    let maxWidth = 0;
+    let isNeedShow = false;
+    // 先遍历第一遍，计算出需要对齐的长度
+    $("a").each((index, e) => {
+        const jElement = $(e);
+        const title = jElement.attr("title");
+        if (!title) {
+            return;
+        }
+        if (title.length > maxWidth) {
+            maxWidth = title.length;
+        }
+        if (title !== jElement.text()) {
+            isNeedShow = true;
+        }
+    });
+    // 遍历第二遍开始替换
+    if (isNeedShow) {
+        $("a").each((index, e) => {
+            const jElement = $(e);
+            const title = jElement.attr("title")
+            if (!title) {
+                return;
+            }
+            // 链接的文本替换
+            jElement.text(title);
+            const spanHtml = `${repeat(" ", maxWidth - title.length)}`;
+            jElement.after(spanHtml);
+        });
+    }
+
+    /**
+     * 将text重复count次拼接为string返回
+     *
+     * @param text
+     * @param count
+     * @return {string}
+     */
+    function repeat(text, count) {
+        const buff = [];
+        for (let i = 0; i < count; i++) {
+            buff.push(text)
+        }
+        return buff.join("");
+    }
+
 })();
 
