@@ -40,7 +40,7 @@
     $("body").append($(btnHtml));
 
     // 绑定事件
-    $("#go").click(e => {
+    function go(e) {
 
         // 从页面元素中获取输入值
         let groupId = $("#group_id").val();
@@ -83,7 +83,17 @@
             targetUrl += version + "/"
         }
         document.location = targetUrl;
-    });
+    }
+
+    // 单击Go按钮的时候跳转
+    $("#go").click(go);
+    
+    // 在输入的时候随时能够按回车也跳转
+    $("#group_id,#article_id,#version").keyup(e => {
+        if (e.keyCode === 13) {
+            $("#go").click();
+        }
+    })
 
     // 恢复历史记录
     let lastInput = localStorage.getItem(historyLocalStorageKey);
