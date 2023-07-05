@@ -21,18 +21,18 @@
     <table style="border-spacing: 15px;">
         <tr>
             <td><label for="group_id">Group ID: </label></td>
-            <td><input id="group_id" placeholder="group id" style="width: 300px; height: 30px;" autocomplete="true"></td>
+            <td><input id="group_id" placeholder="group id" style="width: 300px; height: 30px;" autocomplete="true" tabindex="10086"></td>
             <td rowspan="3" style="padding-left: 30px; align-content: center;">
                 <button id="go" style="width: 100px; height: 100px; font-size: 25px; border-radius: 50px; cursor: pointer; border-width: 0px; color: #AAA; ">&nbsp;Go!&nbsp;</button>
             </td>
         </tr>
         <tr>
             <td><label for="article_id">Article ID: </label></td>
-            <td><input id="article_id" placeholder="article id" style="width: 300px; height: 30px;"></td>
+            <td><input id="article_id" placeholder="article id" style="width: 300px; height: 30px;" tabindex="10087"></td>
         </tr>
         <tr>
             <td><label for="version">Version:</label></td>
-            <td> <input id="version" placeholder="version" style="width: 300px; height: 30px;"></td>
+            <td> <input id="version" placeholder="version" style="width: 300px; height: 30px;" tabindex="10088"></td>
         </tr>
     </table>
 </fieldset>
