@@ -191,7 +191,7 @@ The value ${groupId} you input does not conform to any of the above formats
     function alreadyFillWhitespaceCount(nextSiblingNodeValue) {
         let count = 0;
         for (let c of nextSiblingNodeValue) {
-            if (c === '-') {
+            if (c !== ' ') {
                 break;
             }
             count++;
