@@ -2,6 +2,10 @@
 
 此脚本是为了提升[Maven中央仓库](https://repo1.maven.org/maven2)的使用体验。
 
+从油猴商店安装：
+
+https://greasyfork.org/zh-CN/scripts/471802-repo1-maven-org-helper
+
 ## 功能一：GAV快速访问详情页
 
 不开启脚本的情况： 
