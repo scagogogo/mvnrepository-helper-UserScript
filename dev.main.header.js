@@ -10,7 +10,7 @@
 // @require https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js
 // @grant       none
 // @license MIT
-// @require     file://D:/workspace/maven-repo1-helper-UserScript/main.js
+// @require     file:///Users/cc11001100/github/scagogogo/mvnrepository-helper-UserScript/dist/index.js
 // ==/UserScript==
 (() => {
 

@@ -13,7 +13,7 @@
 // ==/UserScript==
 (() => {
 
-    // 使用localStorage存储上次的输入记录，这个是用来存储数据的key 
+    // 使用localStorage存储上次的输入记录，这个是用来存储数据的key
     const historyLocalStorageKey = "fast-go-history";
 
     // 在页面上添加快速跳转的表单
@@ -43,7 +43,7 @@
 
 
     /**
-     * 把用户的输入保存到本地一份 
+     * 把用户的输入保存到本地一份
      */
     function persistHistory() {
         let groupId = $("#group_id").val();
@@ -56,7 +56,7 @@
         }));
     }
 
-    // 绑定输入时实时保存 
+    // 绑定输入时实时保存
     $("#group_id,#article_id,#version").on("input", persistHistory);
 
 
@@ -80,7 +80,7 @@
 
             let split = groupId.split(":");
 
-            // GroupID中的冒号超过了两个，为不允许的值 
+            // GroupID中的冒号超过了两个，为不允许的值
             if (split.length > 3) {
                 alert(`GroupID can be in one of the following formats: 
 - GroupId
@@ -91,7 +91,7 @@ The value ${groupId} you input does not conform to any of the above formats
                 return;
             }
 
-            // 重写自己的值 
+            // 重写自己的值
             groupId = split[0]
 
             // 尝试从GroupID中获取ArtifactID
@@ -173,9 +173,9 @@ The value ${groupId} you input does not conform to any of the above formats
                 return;
             }
 
-            // 链接文本替换 
+            // 链接文本替换
             jElement.text(title);
-            // 后面的节点填充必要的空格 
+            // 后面的节点填充必要的空格
             const needFillCharCount = maxWidth - title.length - alreadyFillWhitespaceCount(e.nextSibling.nodeValue);
             e.nextSibling.nodeValue = repeat(" ", needFillCharCount) + e.nextSibling.nodeValue;
 
@@ -183,10 +183,10 @@ The value ${groupId} you input does not conform to any of the above formats
     }
 
     /**
-     * 看看现在已经有多少个空格了 
-     * 
-     * @param {下一个text node的值，从这里统计已经有的空格的长度 } nextSiblingNodeValue 
-     * @returns 
+     * 看看现在已经有多少个空格了
+     *
+     * @param {下一个text node的值，从这里统计已经有的空格的长度 } nextSiblingNodeValue
+     * @returns
      */
     function alreadyFillWhitespaceCount(nextSiblingNodeValue) {
         let count = 0;

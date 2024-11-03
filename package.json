@@ -1,0 +1,20 @@
+{
+  "name": "mvnrepository-helper-UserScript",
+  "version": "0.0.1",
+  "description": "this is userscript's description",
+  "main": "index.js",
+  "repository": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
+  "namespace": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
+  "document": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js"
+  },
+  "author": "CC11001100 <CC11001100@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-merge": "^5.9.0"
+  }
+}
