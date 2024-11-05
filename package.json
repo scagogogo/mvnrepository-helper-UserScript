@@ -16,5 +16,9 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.9.0"
+  },
+  "dependencies": {
+    "current-script-polyfill": "^1.0.0",
+    "jszip": "3.10.1"
   }
 }

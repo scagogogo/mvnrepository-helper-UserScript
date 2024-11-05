@@ -1,15 +1,14 @@
 // ==UserScript==
-// @name         repo1.maven.org Helper
-// @namespace    https://github.com/scagogogo/maven-repo1-helper-UserScript
-// @version      0.2
-// @description  用于辅助使用maven中央仓库
-// @document
-// @author       CC11001100
-// @match       *://repo1.maven.org/*
-// @run-at document-idle
+// @name         mvnrepository-helper-UserScript
+// @namespace    https://github.com/scagogogo/mvnrepository-helper-UserScript
+// @version      0.0.1
+// @description  this is userscript's description
+// @document     https://github.com/scagogogo/mvnrepository-helper-UserScript
+// @author       CC11001100 <CC11001100@qq.com>
+// @match        *://*/*
 // @require https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js
-// @grant       none
-// @license MIT
+// @run-at document-idle
+// @grant GM_xmlhttpRequest
 // @require     file:///Users/cc11001100/github/scagogogo/mvnrepository-helper-UserScript/dist/index.js
 // ==/UserScript==
 (() => {
