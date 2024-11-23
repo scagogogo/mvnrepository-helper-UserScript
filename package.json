@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "current-script-polyfill": "^1.0.0",
-    "jszip": "3.10.1"
+    "jszip": "2.7.0"
   }
 }
