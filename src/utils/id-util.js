@@ -1,5 +1,5 @@
 /**
- * 生成一个随机id
+ * 生成一个随机id，类似UUID的格式
  *
  * @returns {string}
  */

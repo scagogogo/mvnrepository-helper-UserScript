@@ -7,9 +7,10 @@
  * @returns {string}
  */
 function buildJarUrl(groupId, artifactId, version) {
-    // TODO
     return `https://repo1.maven.org/maven2/${groupId.replaceAll('.', '/')}/${artifactId}/${version}/${artifactId}-${version}.jar`
 }
+
+// TODO 2024-11-24 13:31:47 构造更多的格式
 
 module.exports = {
     buildJarUrl

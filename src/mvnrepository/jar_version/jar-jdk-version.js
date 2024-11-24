@@ -4,11 +4,16 @@ const {initComponentDetailPageJarJdkVersion} = require("./page/component-detail-
 const {initComponentVersionListPageJarJdkVersion} = require("./page/component-list-page");
 
 /**
- *初始化
+ * 初始化展示Jar版本
  */
 function initJarJdkVersion() {
+
+    // 组件详情页
     initComponentDetailPageJarJdkVersion();
+
+    // 组件列表页
     initComponentVersionListPageJarJdkVersion();
+
 }
 
 module.exports = {

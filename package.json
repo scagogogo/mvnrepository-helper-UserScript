@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "current-script-polyfill": "^1.0.0",
+    "idb": "^8.0.0",
     "jszip": "2.7.0"
   }
 }

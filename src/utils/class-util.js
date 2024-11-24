@@ -1,6 +1,8 @@
 // Java 类文件的魔数（0xCAFEBABE）
 const MAGIC_NUMBER = 0xCAFEBABE;
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 /**
  * 根据文件名判断是否是class文件
  *
@@ -25,6 +27,8 @@ function isClassFileBytes(classBytes) {
     return (classBytes[0] << 24) + (classBytes[1] << 16) + (classBytes[2] << 8) + classBytes[3] === MAGIC_NUMBER;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 /**
  * 解析字节码中的主版本号和次版本号
  *
@@ -40,6 +44,8 @@ function parseClassFileVersion(classBytes) {
         minorVersion,
     }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * 转为人类阅读友好格式
@@ -132,6 +138,8 @@ function jdkVersionToHumanReadableString(majorVersion, minorVersion) {
 
     return minorVersion ? `${jdkVersion}.${minorVersion}` : jdkVersion;
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 module.exports = {
     parseClassFileVersion,

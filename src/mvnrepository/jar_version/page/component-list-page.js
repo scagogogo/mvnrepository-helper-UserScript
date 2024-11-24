@@ -1,11 +1,13 @@
 const {randomId} = require("../../../utils/id-util");
 const JSZip = require("jszip");
 const {isInComponentVersionListPage} = require("../../../envs/detect-current-page");
-const {resolveJdkVersion, resolveJarJdkVersion} = require("../detector/jar-jdk-version-detector");
+const {resolveJarJdkVersion} = require("../detector/jar-jdk-version-detector");
 
 
 /**
  * 当前是否在组件的版本列表页面
+ *
+ * 比如： https://mvnrepository.com/artifact/org.projectlombok/lombok
  */
 function initComponentVersionListPageJarJdkVersion() {
 
@@ -13,14 +15,16 @@ function initComponentVersionListPageJarJdkVersion() {
         return;
     }
 
-    addJdkVersionColumn();
+    addComponentVersionListPageJarJdkVersion();
 
 }
 
 /**
- * 修改页面的表格，加一列jdk的版本
+ * 修改页面的表格，给版本列表的表格加一列jdk的版本
+ *
+ * 比如： https://mvnrepository.com/artifact/org.projectlombok/lombok
  */
-function addJdkVersionColumn() {
+function addComponentVersionListPageJarJdkVersion() {
 
     const table = $('.gridcontainer table.versions');
 
@@ -28,11 +32,17 @@ function addJdkVersionColumn() {
     addTableHeader(table);
 
     // 遍历每一行，开始读取解析
-    addTableCell(table);
+    addTableValue(table);
 
 }
 
-async function addTableCell(tableElt) {
+/**
+ * 展示解析到的值
+ *
+ * @param tableElt
+ * @returns {Promise<void>}
+ */
+async function addTableValue(tableElt) {
 
     const {groupId, artifactId} = parseGroupIdAndArtifactId();
 
@@ -49,7 +59,6 @@ async function addTableCell(tableElt) {
         });
         resolveJarJdkVersion(groupId, artifactId, version, id);
     });
-
 
 }
 
@@ -78,6 +87,11 @@ function parseGroupIdAndArtifactId() {
     }
 }
 
+/**
+ * 增加表头，与原有内容的样式保持一致
+ *
+ * @param tableElt
+ */
 function addTableHeader(tableElt) {
     const header = `<th align="center">Build JDK Version</th>`;
     $(tableElt).find('thead tr th:contains("Version")').after(() => header);

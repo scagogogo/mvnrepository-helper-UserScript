@@ -4,6 +4,8 @@ const {resolveJarJdkVersion} = require("../detector/jar-jdk-version-detector");
 
 /**
  * 组件详情页的增强
+ *
+ * 比如： https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.36
  */
 function initComponentDetailPageJarJdkVersion() {
 
@@ -11,8 +13,16 @@ function initComponentDetailPageJarJdkVersion() {
         return;
     }
 
-    // TODO 2024-11-23 01:06:27 重构为使用jQuery
+    addComponentDetailPageJarJdkVersion();
 
+}
+
+/**
+ * 当前页面的表格增加一行，展示对应的Jar包的JDK编译信息
+ *
+ * 比如： https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.36
+ */
+function addComponentDetailPageJarJdkVersion() {
     // 获取表格，插入一行编译使用的JDK版本
     const tbodyElt = document.querySelector('.content table.grid tbody');
 
@@ -20,25 +30,22 @@ function initComponentDetailPageJarJdkVersion() {
     const lineElt = document.createElement('tr');
     tbodyElt.appendChild(lineElt);
 
-    // 左边的列
+    // 新增行左边的标题列，样式与页面上原有的内容的样式保持一致
     const jdkVersionNameColumnElt = document.createElement('th');
     jdkVersionNameColumnElt.style = 'width: 12em;';
     jdkVersionNameColumnElt.textContent = 'Build JDK Version';
     lineElt.appendChild(jdkVersionNameColumnElt);
 
-    // 右边的列
+    // 新增行右边的列，展示任务的一些结果与状态
     const jdkVersionValueColumnElt = document.createElement('td');
     const id = randomId();
     jdkVersionValueColumnElt.id = id;
     lineElt.appendChild(jdkVersionValueColumnElt);
 
-    // 解析当前版本对应的JDK Version
+    // 解析当前页面的组件版本对应的JDK Version并展示，调用底下统一的工具方法
     const {groupId, artifactId, version} = parseGAV(window.location.href);
     resolveJarJdkVersion(groupId, artifactId, version, id);
-
 }
-
-// TODO 2024-11-23 00:57:46 判断Jar包的编译版本
 
 module.exports = {
     initComponentDetailPageJarJdkVersion
