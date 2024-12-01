@@ -67,7 +67,6 @@ async function updateGavJarInformation(jarInformation) {
 
     // 构建数据库记录的唯一标识符
     jarInformation.id = buildId(jarInformation.groupId, jarInformation.artifactId, jarInformation.version);
-    debugger;
     const request = await getDatabase().transaction([NAME], "readwrite")
         .objectStore(NAME)
         .put(jarInformation);
