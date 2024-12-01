@@ -1,5 +1,8 @@
 # repo1.maven.org Helper 油猴脚本
 
+
+<img src="data/demo-video.gif">
+
 此脚本是为了提升[Maven中央仓库](https://repo1.maven.org/maven2)的使用体验。
 
 从油猴商店安装：
