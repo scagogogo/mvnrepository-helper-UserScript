@@ -13,7 +13,7 @@ const {initDatabase} = require("./database/database");
             addQuickJump();
             break;
         case 'mvnrepository.com':
-            // 仅仅在mvnrepository这个域名下需要创建数据库
+            // 仅仅在mvnrepository这个域名下需要创建数据库，避免在乱七八糟的域名下创建此数据库
             await initDatabase();
             // Java开发者都会用到的这个域名
             initJarJdkVersion();

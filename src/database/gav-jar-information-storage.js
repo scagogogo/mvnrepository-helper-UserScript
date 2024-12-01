@@ -11,6 +11,7 @@ class GavJarInformation {
 
     constructor() {
 
+        // GAV加起来组成的ID
         self.id = null;
 
         self.groupId = null;
@@ -32,7 +33,7 @@ class GavJarInformation {
 }
 
 /**
- * 保存
+ * 保存一个Jar包的信息
  *
  * @param jarInformation {GavJarInformation}
  */

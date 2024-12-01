@@ -15,6 +15,8 @@ const {
 
 /**
  *
+ * 解析GAV的Jar包编译信息，并在界面上展示
+ *
  * @param groupId
  * @param artifactId
  * @param version
@@ -22,15 +24,20 @@ const {
  * @returns {Promise<void>}
  */
 async function resolveJarJdkVersion(groupId, artifactId, version, elementId) {
-
-    // TODO 2024-11-24 00:35:28 读取本地缓存，如果命中了的话就直接展示本地缓存的结果
+    // 读取本地缓存，如果命中了的话就直接展示本地缓存的结果
     const jarInformation = await findGavJarInformation(groupId, artifactId, version);
     if (jarInformation) {
-        debugger;
-    }
 
-    // 请求Jar文件
-    requestAndAnalyzeJarFile(groupId, artifactId, version, elementId);
+        // 从缓存中展示manifest信息
+        let {key, value} = parseBuildJdkVersion(jarInformation.manifest);
+        showJarManifestAnalyzeResult(elementId, jarInformation.manifest, key, value);
+
+        // 从缓存中展示class信息
+        showAnalyzeJarClassResult(elementId, jarInformation.metric, jarInformation.maxMajorVersion, jarInformation.maxMinorVersion);
+    } else {
+        // 请求Jar文件
+        requestAndAnalyzeJarFile(groupId, artifactId, version, elementId);
+    }
 }
 
 /**
@@ -61,13 +68,12 @@ function analyzeJarFile(groupId, artifactId, version, elementId) {
         removeRequestJarProgress(elementId);
 
         if (response.status === 200) {
-
             const jarFile = new JSZip(response.response);
-
-            analyzeManifest(groupId, artifactId, version, elementId, jarFile);
-
-            analyzeJar(groupId, artifactId, version, elementId, jarFile);
-
+            // 异步梳理
+            (async () => {
+                await analyzeManifest(groupId, artifactId, version, elementId, jarFile);
+                await analyzeJar(groupId, artifactId, version, elementId, jarFile);
+            })();
         } else {
             showErrorMsg(elementId, "download jar file error, response status " + response.status);
         }
@@ -124,7 +130,6 @@ async function analyzeManifest(groupId, artifactId, version, elementId, jarFile)
     if (jarFile.files[metaFileName]) {
         manifest = jarFile.files[metaFileName].asText();
         let {key, value} = parseBuildJdkVersion(manifest);
-        console.log(manifest);
         showJarManifestAnalyzeResult(elementId, manifest, key, value);
     } else {
         showJarManifestAnalyzeResult(elementId, null, null, null);

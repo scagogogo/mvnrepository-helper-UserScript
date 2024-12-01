@@ -1,4 +1,5 @@
 const {jdkVersionToHumanReadableString} = require("../../../utils/class-util");
+const {setClipboardContent} = require("../../../utils/clipboard-util");
 
 /**
  *
@@ -51,7 +52,7 @@ async function showAnalyzeJarClassResult(elementId, metric, maxMajorVersion, max
 
     // 分布情况
     const msgs = await buildTopNMetric(metric, 50);
-    for(let msg of msgs) {
+    for (let msg of msgs) {
         const percent = document.createElement("li");
         percent.style = "padding: 4px;";
         percent.textContent = msg;
@@ -80,6 +81,12 @@ async function showAnalyzeJarClassResult(elementId, metric, maxMajorVersion, max
     classElt.onmouseout = function () {
         tips.style.display = 'none';
     };
+
+    // 鼠标单击的时候复制到剪切板
+    classElt.onclick = function () {
+        const s = msgs.join("\n");
+        setClipboardContent(s);
+    }
 }
 
 /**
@@ -96,7 +103,7 @@ async function buildTopNMetric(metric, n) {
     const msgs = [];
     for (let i = 0; i < n && i < sortedMetric.length; i++) {
         const [version, count] = sortedMetric[i];
-        const percent =100.0 * count / total;
+        const percent = 100.0 * count / total;
         const versionHumanReadable = jdkVersionToHumanReadableString(version);
         const msg = `Class Version ${versionHumanReadable} : ${count} / ${total} ≈ ${percent.toFixed(2)}%`;
         msgs.push(msg);

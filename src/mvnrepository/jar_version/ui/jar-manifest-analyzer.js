@@ -1,3 +1,5 @@
+const {setClipboardContent} = require("../../../utils/clipboard-util");
+
 /**
  *
  * @param elementId
@@ -59,6 +61,11 @@ async function showJarManifestAnalyzeResult(elementId, manifest, jdkTitle, jdkVe
     manifestElt.onmouseout = function () {
         tips.style.display = 'none';
     };
+
+    // 鼠标单击的时候复制到剪切板
+    manifestElt.onclick = function () {
+        setClipboardContent(manifest);
+    }
 }
 
 module.exports = {
