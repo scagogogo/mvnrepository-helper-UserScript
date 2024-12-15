@@ -1,6 +1,6 @@
 {
   "name": "mvnrepository-helper-UserScript",
-  "version": "0.0.1",
+  "version": "0.3",
   "description": "this is userscript's description",
   "main": "index.js",
   "repository": "https://github.com/scagogogo/mvnrepository-helper-UserScript",

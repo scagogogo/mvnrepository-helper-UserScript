@@ -32,9 +32,18 @@ function addComponentDetailPageJarJdkVersion() {
 
     // 新增行左边的标题列，样式与页面上原有的内容的样式保持一致
     const jdkVersionNameColumnElt = document.createElement('th');
-    jdkVersionNameColumnElt.style = 'width: 12em;';
-    jdkVersionNameColumnElt.textContent = 'Build JDK Version';
-    lineElt.appendChild(jdkVersionNameColumnElt);
+    const columnTitleElt = document.createElement("span");
+    columnTitleElt.style = 'width: 12em; ';
+    columnTitleElt.textContent = 'Build JDK Version';
+    jdkVersionNameColumnElt.appendChild(columnTitleElt);
+    // 问号提示
+    const documentTips = document.createElement("a");
+    documentTips.textContent = "?";
+    documentTips.style = "margin-left: 5px; border-radius: 50%; border: 2px solid black; width: 20px; display: inline-block; text-align: center; cursor: pointer; ";
+    documentTips.href = "https://github.com/scagogogo/mvnrepository-helper-UserScript";
+    documentTips.target = "_blank";
+    jdkVersionNameColumnElt.appendChild(documentTips);
+    lineElt.append(jdkVersionNameColumnElt);
 
     // 新增行右边的列，展示任务的一些结果与状态
     const jdkVersionValueColumnElt = document.createElement('td');
