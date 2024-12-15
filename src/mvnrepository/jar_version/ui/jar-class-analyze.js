@@ -83,6 +83,7 @@ async function showAnalyzeJarClassResult(elementId, metric, maxMajorVersion, max
     };
 
     // 鼠标单击的时候复制到剪切板
+    classElt.title = "Click with the left mouse button to copy the pop-up window contents to the clipboard";
     classElt.onclick = function () {
         const s = msgs.join("\n");
         setClipboardContent(s);

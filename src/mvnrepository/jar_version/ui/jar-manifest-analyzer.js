@@ -63,6 +63,7 @@ async function showJarManifestAnalyzeResult(elementId, manifest, jdkTitle, jdkVe
     };
 
     // 鼠标单击的时候复制到剪切板
+    manifestElt.title = "Click with the left mouse button to copy the pop-up window contents to the clipboard";
     manifestElt.onclick = function () {
         setClipboardContent(manifest);
     }
