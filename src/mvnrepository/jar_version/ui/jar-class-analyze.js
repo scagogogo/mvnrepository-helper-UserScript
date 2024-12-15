@@ -100,12 +100,23 @@ async function buildTopNMetric(metric, n) {
     const sortedMetric = Array.from(metric).sort((a, b) => b[1] - a[1]);
     const total = Array.from(metric).reduce((acc, [key, value]) => acc + value, 0);
 
+    // 找出最高的版本
+    let highest = 0;
+    for(let item of sortedMetric) {
+        if (item[0] > highest) {
+            highest = item[0];
+        }
+    }
+
     const msgs = [];
     for (let i = 0; i < n && i < sortedMetric.length; i++) {
         const [version, count] = sortedMetric[i];
         const percent = 100.0 * count / total;
         const versionHumanReadable = jdkVersionToHumanReadableString(version);
-        const msg = `Class Version ${versionHumanReadable} : ${count} / ${total} ≈ ${percent.toFixed(2)}%`;
+        let msg = `Class Version ${versionHumanReadable} : ${count} / ${total} ≈ ${percent.toFixed(2)}%`;
+        if (version === highest) {
+            msg = msg + " (Highest JDK Version)";
+        }
         msgs.push(msg);
     }
     return msgs;
