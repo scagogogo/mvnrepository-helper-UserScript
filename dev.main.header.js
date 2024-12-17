@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mvnrepository-helper-UserScript
 // @namespace    https://github.com/scagogogo/mvnrepository-helper-UserScript
-// @version      0.4
+// @version      0.5
 // @description  this is userscript's description
 // @document     https://github.com/scagogogo/mvnrepository-helper-UserScript
 // @author       CC11001100 <CC11001100@qq.com>

@@ -1,6 +1,9 @@
 const {isInComponentDetailPage, parseGAV} = require("../../../envs/detect-current-page");
 const {randomId} = require("../../../utils/id-util");
 const {resolveJarJdkVersion} = require("../detector/jar-jdk-version-detector");
+const {parseBaseUrl} = require("../../../utils/url-util");
+const {buildGavJarPath} = require("../../../utils/mvn-util");
+const {showErrorMsg} = require("../ui/error");
 
 /**
  * 组件详情页的增强
@@ -51,9 +54,22 @@ function addComponentDetailPageJarJdkVersion() {
     jdkVersionValueColumnElt.id = id;
     lineElt.appendChild(jdkVersionValueColumnElt);
 
+    // 解析Jar包的URL
+    const jarUrl = parseJarUrl();
+
     // 解析当前页面的组件版本对应的JDK Version并展示，调用底下统一的工具方法
     const {groupId, artifactId, version} = parseGAV(window.location.href);
-    resolveJarJdkVersion(groupId, artifactId, version, id);
+
+    resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
+}
+
+/**
+ * 解析Jar包的URL
+ *
+ * @returns {string | null}
+ */
+function parseJarUrl() {
+    return $('a:contains("jar"):first').attr("href");
 }
 
 module.exports = {
