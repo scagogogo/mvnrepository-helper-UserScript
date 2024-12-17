@@ -7,7 +7,7 @@
   "namespace": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
   "document": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
+    "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "watch": "webpack --watch --config webpack.dev.js"
   },
   "author": "CC11001100 <CC11001100@qq.com>",
@@ -15,11 +15,11 @@
   "devDependencies": {
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.9.0"
+    "webpack-merge": "^5.9.0",
+    "jszip": "2.7.0",
+    "idb": "^8.0.0",
+    "current-script-polyfill": "^1.0.0"
   },
   "dependencies": {
-    "current-script-polyfill": "^1.0.0",
-    "idb": "^8.0.0",
-    "jszip": "2.7.0"
   }
 }

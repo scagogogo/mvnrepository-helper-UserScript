@@ -30,6 +30,8 @@ function parseClassBuildJdkVersionMetric(jarFile) {
         }
         const count = metric.get(majorVersion) || 0;
         metric.set(majorVersion, count + 1);
+
+        console.log(filename + " " + majorVersion);
     }
     return {
         metric,
