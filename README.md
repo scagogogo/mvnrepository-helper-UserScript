@@ -142,15 +142,19 @@ https://repo1.maven.org/maven2/com/alibaba/fastjson/2.0.9/
 
 ![image-20230727113126701](README.assets/image-20230727113126701.png)
 
+# 四、FAQ
 
 
 
+![image-20241218030043456](./README.assets/image-20241218030043456.png)
 
-# 四、Contributors
+
+
+# 五、Contributors
 
 <img src="https://contrib.nn.ci/api?repo=scagogogo/mvnrepository-helper-UserScript" />
 
-# 五、Star History
+# 六、Star History
 
 <img src="https://starchart.cc/scagogogo/mvnrepository-helper-UserScript.svg" />
 

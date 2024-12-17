@@ -21,9 +21,10 @@ const {
  * @param artifactId
  * @param version
  * @param elementId 要把进度及结果展示在哪个元素中
+ * @param jarUrl
  * @returns {Promise<void>}
  */
-async function resolveJarJdkVersion(groupId, artifactId, version, elementId) {
+async function resolveJarJdkVersion(groupId, artifactId, version, elementId, jarUrl) {
     // 读取本地缓存，如果命中了的话就直接展示本地缓存的结果
     const jarInformation = await findGavJarInformation(groupId, artifactId, version);
     if (await isJarInformationCacheValid(jarInformation)) {
@@ -36,7 +37,7 @@ async function resolveJarJdkVersion(groupId, artifactId, version, elementId) {
         showAnalyzeJarClassResult(elementId, jarInformation.metric, jarInformation.maxMajorVersion, jarInformation.maxMinorVersion);
     } else {
         // 请求Jar文件
-        requestAndAnalyzeJarFile(groupId, artifactId, version, elementId);
+        requestAndAnalyzeJarFile(groupId, artifactId, version, elementId, jarUrl);
     }
 }
 
@@ -60,10 +61,16 @@ async function isJarInformationCacheValid(jarInformation) {
  * @param artifactId
  * @param version
  * @param elementId
+ * @param jarUrl
  * @returns {Promise<void>}
  */
-async function requestAndAnalyzeJarFile(groupId, artifactId, version, elementId) {
-    const jarUrl = buildJarUrl(groupId, artifactId, version);
+async function requestAndAnalyzeJarFile(groupId, artifactId, version, elementId, jarUrl) {
+
+    // 如果没有传递Jar包的URL的时候，则尝试拼接默认的Jar包地址
+    if (!jarUrl) {
+        jarUrl = buildJarUrl(groupId, artifactId, version);
+    }
+
     // 使用GM_xmlhttpRequest下载JAR文件
     GM_xmlhttpRequest({
         method: "GET",

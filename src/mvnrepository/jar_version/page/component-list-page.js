@@ -2,6 +2,12 @@ const {randomId} = require("../../../utils/id-util");
 const JSZip = require("jszip");
 const {isInComponentVersionListPage} = require("../../../envs/detect-current-page");
 const {resolveJarJdkVersion} = require("../detector/jar-jdk-version-detector");
+const {buildGavJarPath} = require("../../../utils/mvn-util");
+const {
+    findRepoInformationStorage,
+    findRepoInformation,
+    RepoInformation, saveRepoInformation
+} = require("../../../database/repo-information-storage");
 
 
 /**
@@ -46,22 +52,70 @@ async function addTableValue(tableElt) {
 
     const {groupId, artifactId} = parseGroupIdAndArtifactId();
 
-    // TODO 增加一个缓存，解析过一次的就不需要再重复解析了
     $(tableElt).find('tbody tr td').each((index, element) => {
+
+        // 寻找到版本详情页的链接，围绕着这个链接修改页面布局
         const versionLink = $(element).find('.vbtn');
         if (versionLink.length !== 1) {
             return;
         }
+
+        // 获取jar包对应仓库的链接
+        const repoDetailPageRequestPath = $(element).next().next().find("a").attr("href");
+
         const version = versionLink.text();
         const id = randomId();
         $(element).after(() => {
             return "<td id=" + id + "></td>";
         });
-        resolveJarJdkVersion(groupId, artifactId, version, id);
+
+        processSingle(groupId, artifactId, version, id, repoDetailPageRequestPath);
+
     });
 
 }
 
+/**
+ * 处理单个的版本号
+ *
+ * @param groupId
+ * @param artifactId
+ * @param version
+ * @param id
+ * @param repoDetailPageRequestPath
+ * @returns {Promise<void>}
+ */
+async function processSingle(groupId, artifactId, version, id, repoDetailPageRequestPath) {
+
+    const repoInformation = await findRepoInformation(repoDetailPageRequestPath);
+    if (repoInformation) {
+        const jarUrl = repoInformation.baseUrl + buildGavJarPath(groupId, artifactId, version);
+        await resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
+        return;
+    }
+
+    // 发送请求，拿详情页的仓库地址
+    $.ajax({
+        url: repoDetailPageRequestPath,
+        type: "GET",
+        success: function (data) {
+            const repoBaseUrl = $(data).find(".im-subtitle").text();
+
+            // 保存一下仓库信息
+            const repoInformation = new RepoInformation()
+            repoInformation.id = repoDetailPageRequestPath;
+            repoInformation.baseUrl = repoBaseUrl;
+            saveRepoInformation(repoInformation);
+
+            const jarUrl = repoBaseUrl + buildGavJarPath(groupId, artifactId, version);
+            resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
+        },
+        error: function (error) {
+            // 请求失败时的回调函数
+            console.error(error);
+        }
+    });
+}
 
 /**
  * 解析页面中的GroupId和ArtifactId

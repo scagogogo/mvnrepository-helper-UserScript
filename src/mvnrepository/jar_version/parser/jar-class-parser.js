@@ -6,6 +6,7 @@ function initJarBlackFileName() {
     // 有一些Jar包明明是1.8版本的，但是会内置一个模块信息，而这个模块信息是可以被忽略的，比如：
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind/2.18.2
     set.add("META-INF/versions/9/module-info.class");
+    set.add("module-info.class");
 
     return set;
 }
