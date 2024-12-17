@@ -18,7 +18,7 @@ async function showJarManifestAnalyzeResult(elementId, manifest, jdkTitle, jdkVe
 
     // META-INF/MANIFEST.MF 文件可能不存在
     if (!manifest) {
-        manifestElt.textContent = "META-INF/MANIFEST.MF: file not found";
+        manifestElt.textContent = "META-INF/MANIFEST.MF: meta file not found";
         return;
     }
 
