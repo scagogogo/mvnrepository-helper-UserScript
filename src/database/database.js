@@ -14,10 +14,13 @@ const DATABASE_NAME = "mvnrepository-helper-UserScript";
  */
 async function initDatabase() {
     try {
-        database = await openDB(DATABASE_NAME, 1, {
+        database = await openDB(DATABASE_NAME, 2, {
             upgrade(database, oldVersion, newVersion, transaction, event) {
                 if (!database.objectStoreNames.contains("gav-jar-information-storage")) {
                     database.createObjectStore("gav-jar-information-storage", {keyPath: "id"});
+                }
+                if (!database.objectStoreNames.contains("repo-information-storage")) {
+                    database.createObjectStore("repo-information-storage", {keyPath: "id"});
                 }
             }
         });

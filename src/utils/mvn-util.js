@@ -19,7 +19,7 @@ function buildJarUrl(groupId, artifactId, version) {
  * @returns {string}
  */
 function buildGavJarPath(groupId, artifactId, version) {
-    return `/${groupId.replaceAll('.', '/')}/${artifactId}/${version}/${artifactId}-${version}.jar`;
+    return `${groupId.replaceAll('.', '/')}/${artifactId}/${version}/${artifactId}-${version}.jar`;
 }
 
 // TODO 2024-11-24 13:31:47 构造更多的格式
