@@ -26,7 +26,7 @@ const {
 async function resolveJarJdkVersion(groupId, artifactId, version, elementId) {
     // 读取本地缓存，如果命中了的话就直接展示本地缓存的结果
     const jarInformation = await findGavJarInformation(groupId, artifactId, version);
-    if (jarInformation) {
+    if (await isJarInformationCacheValid(jarInformation)) {
 
         // 从缓存中展示manifest信息
         let {key, value} = parseBuildJdkVersion(jarInformation.manifest);
@@ -38,6 +38,19 @@ async function resolveJarJdkVersion(groupId, artifactId, version, elementId) {
         // 请求Jar文件
         requestAndAnalyzeJarFile(groupId, artifactId, version, elementId);
     }
+}
+
+/**
+ * 判断读取到的缓存信息是否有效
+ *
+ * @param jarInformation {GavJarInformation}
+ * @returns {Promise<boolean>}
+ */
+async function isJarInformationCacheValid(jarInformation) {
+    if (!jarInformation) {
+        return false;
+    }
+    return jarInformation.manifestDetectDone && jarInformation.jarClassDetectDone
 }
 
 /**
@@ -104,11 +117,13 @@ async function analyzeJar(groupId, artifactId, version, elementId, jarFile) {
         jarInformation.metric = metric;
         jarInformation.maxMajorVersion = maxMajorVersion;
         jarInformation.maxMinorVersion = maxMinorVersion;
+        jarInformation.jarClassDetectDone = true;
         await saveGavJarInformation(jarInformation);
     } else {
         jarInformation.metric = metric;
         jarInformation.maxMajorVersion = maxMajorVersion;
         jarInformation.maxMinorVersion = maxMinorVersion;
+        jarInformation.jarClassDetectDone = true;
         await updateGavJarInformation(jarInformation);
     }
 }
