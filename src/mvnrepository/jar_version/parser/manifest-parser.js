@@ -7,7 +7,7 @@
 function parseBuildJdkVersion(manifest) {
 
     // 做成map
-    const lines = manifest.split('\n');
+    const lines = (manifest || "").split('\n');
     const map = new Map();
     for (let line of lines) {
         const split = line.split(":");
