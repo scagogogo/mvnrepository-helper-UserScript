@@ -46,8 +46,9 @@ async function showAnalyzeJarClassResult(elementId, metric, maxMajorVersion, max
     classElt.style.cursor = "pointer;";
 
     // 标题说明
+    const total = Array.from(metric).reduce((acc, [key, value]) => acc + value, 0);
     const title = document.createElement("h3");
-    title.innerText = "JVM version distribution of Class files in this Jar";
+    title.innerText = `JVM version distribution of Class files in this Jar (Total ${total} class files)`;
     tips.appendChild(title);
 
     // 分布情况
