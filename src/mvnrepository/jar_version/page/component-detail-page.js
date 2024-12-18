@@ -56,6 +56,10 @@ function addComponentDetailPageJarJdkVersion() {
 
     // 解析Jar包的URL
     const jarUrl = parseJarUrl();
+    if (!jarUrl) {
+        showErrorMsg(id, "not found jar file");
+        return;
+    }
 
     // 解析当前页面的组件版本对应的JDK Version并展示，调用底下统一的工具方法
     const {groupId, artifactId, version} = parseGAV(window.location.href);
