@@ -1,4 +1,5 @@
 const {getDatabase} = require("./database");
+const {resolveJarJdkVersion} = require("../mvnrepository/jar_version/detector/jar-jdk-version-detector");
 
 const NAME = "repo-information-storage";
 
@@ -7,13 +8,13 @@ const NAME = "repo-information-storage";
  */
 class RepoInformation {
 
-    constructor() {
+    constructor(id, baseUrl) {
 
         // 在Maven中央仓库的详情页的链接
-        self.id = null;
+        this.id = id;
 
         // 基础url
-        self.baseUrl = null;
+        this.baseUrl = baseUrl;
 
     }
 
@@ -68,9 +69,34 @@ async function findRepoInformation(id) {
     return await getDatabase().transaction([NAME], "readonly").objectStore(NAME).get(id);
 }
 
+/**
+ * 对于已知的一些仓库，直接把数据初始化，这样也不必再发请求了，速度可以稍微快一些
+ *
+ * @returns {Promise<void>}
+ */
+async function initRepoInformation() {
+
+    const repoInformation = await findRepoInformation("/repos/central");
+    if (repoInformation) {
+        return;
+    }
+
+    const repos = [
+        new RepoInformation("/repos/central", "https://repo1.maven.org/maven2/"),
+        new RepoInformation("/repos/atlassian-3rdparty", "https://maven.atlassian.com/3rdparty/"),
+        new RepoInformation("/repos/geomajas", "http://maven.geomajas.org/"),
+        new RepoInformation("/repos/redhat-ga", "https://maven.repository.redhat.com/ga/"),
+        new RepoInformation("/repos/jboss-thirdparty-releases", "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"),
+    ];
+    for (let repoInformation of repos) {
+        await saveRepoInformation(repoInformation);
+    }
+}
+
 module.exports = {
     RepoInformation,
     saveRepoInformation,
     updateRepoInformation,
-    findRepoInformation
+    findRepoInformation,
+    initRepoInformation
 }
