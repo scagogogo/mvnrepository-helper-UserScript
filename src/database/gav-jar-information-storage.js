@@ -12,21 +12,21 @@ class GavJarInformation {
     constructor() {
 
         // GAV加起来组成的ID
-        self.id = null;
+        this.id = null;
 
-        self.groupId = null;
-        self.artifactId = null;
-        self.version = null;
+        this.groupId = null;
+        this.artifactId = null;
+        this.version = null;
 
         // 对manifest的检测
-        self.manifestDetectDone = false;
-        self.manifest = null;
+        this.manifestDetectDone = false;
+        this.manifest = null;
 
         // 对jar中的class的解析
-        self.jarClassDetectDone = false;
-        self.metric = null;
-        self.maxMajorVersion = null;
-        self.maxMinorVersion = null;
+        this.jarClassDetectDone = false;
+        this.metric = null;
+        this.maxMajorVersion = null;
+        this.maxMinorVersion = null;
 
     }
 
