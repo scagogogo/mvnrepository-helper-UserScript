@@ -1,8 +1,10 @@
 # maven中央仓库油猴脚本
 
-![Greasy Fork Downloads](https://img.shields.io/greasyfork/dt/471802)  ![Greasy Fork Rating](https://img.shields.io/greasyfork/rating-count/471802)  ![GitHub Created At](https://img.shields.io/github/created-at/scagogogo/mvnrepository-helper-UserScript)  ![GitHub contributors](https://img.shields.io/github/contributors-anon/scagogogo/mvnrepository-helper-UserScript)  ![GitHub top language](https://img.shields.io/github/languages/top/scagogogo/mvnrepository-helper-UserScript)  ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Release](https://img.shields.io/github/v/release/scagogogo/mvnrepository-helper-UserScript)   ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/scagogogo/mvnrepository-helper-UserScript)  ![GitHub License](https://img.shields.io/github/license/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Repo stars](https://img.shields.io/github/stars/scagogogo/mvnrepository-helper-UserScript)  ![GitHub forks](https://img.shields.io/github/forks/scagogogo/mvnrepository-helper-UserScript)  ![GitHub watchers](https://img.shields.io/github/watchers/scagogogo/mvnrepository-helper-UserScript)  
+GitHub仓库：https://github.com/scagogogo/mvnrepository-helper-UserScript
 
 介绍视频： https://www.bilibili.com/video/BV13fkgYaEDn
+
+![Greasy Fork Downloads](https://img.shields.io/greasyfork/dt/471802)  ![Greasy Fork Rating](https://img.shields.io/greasyfork/rating-count/471802)  ![GitHub Created At](https://img.shields.io/github/created-at/scagogogo/mvnrepository-helper-UserScript)  ![GitHub contributors](https://img.shields.io/github/contributors-anon/scagogogo/mvnrepository-helper-UserScript)  ![GitHub top language](https://img.shields.io/github/languages/top/scagogogo/mvnrepository-helper-UserScript)  ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Release](https://img.shields.io/github/v/release/scagogogo/mvnrepository-helper-UserScript)   ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/scagogogo/mvnrepository-helper-UserScript)  ![GitHub License](https://img.shields.io/github/license/scagogogo/mvnrepository-helper-UserScript)  ![GitHub Repo stars](https://img.shields.io/github/stars/scagogogo/mvnrepository-helper-UserScript)  ![GitHub forks](https://img.shields.io/github/forks/scagogogo/mvnrepository-helper-UserScript)  ![GitHub watchers](https://img.shields.io/github/watchers/scagogogo/mvnrepository-helper-UserScript)  
 
 # 一、解决了什么问题？
 
@@ -102,7 +104,7 @@ JDK编译信息分为两部分，一部分是从Jar包中的每个class文件中
 
 比如这样，输入`fastjson`的`groupId`、`articleId`、`version`单击`Go`按钮可将当前页面定位到：
 
-```
+```plaintext
 https://repo1.maven.org/maven2/com/alibaba/fastjson/2.0.9/
 ```
 
