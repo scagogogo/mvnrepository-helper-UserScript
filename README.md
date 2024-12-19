@@ -1,5 +1,7 @@
 # maven中央仓库油猴脚本
 
+简体中文 | [English](./README_en.md)
+
 GitHub仓库：https://github.com/scagogogo/mvnrepository-helper-UserScript
 
 介绍视频： https://www.bilibili.com/video/BV13fkgYaEDn
