@@ -103,6 +103,7 @@
                 <li class="nav-item"><a class="nav-link" href="#demo">效果演示</a></li>
                 <li class="nav-item"><a class="nav-link" href="#features">核心功能</a></li>
                 <li class="nav-item"><a class="nav-link" href="#install">安装指南</a></li>
+                <li class="nav-item"><a class="nav-link" href="features.html">功能手册</a></li>
             </ul>
         </div>
     </div>
@@ -112,25 +113,59 @@
 <div class="jumbotron">
     <div class="container text-center">
         <h1 class="display-4">Maven中央仓库助手</h1>
-        <p class="lead">一键显示Jar包编译JDK版本，解决Java版本兼容难题</p>
-        <div class="mt-4">
+        <p class="lead">自动识别Jar包编译JDK版本，解决Java版本兼容难题</p>
+        <div class="mt-4 d-flex justify-content-center gap-3">
+            <!-- 油猴安装按钮 -->
             <a href="https://greasyfork.org/zh-CN/scripts/471802-repo1-maven-org-helper"
-               class="btn btn-light btn-lg me-3" target="_blank">立即安装</a>
+               class="btn btn-warning btn-lg d-flex align-items-center"
+               target="_blank"
+               style="gap: 8px">
+                <!-- 油猴SVG图标 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 3h8v8H3V3m0 10h8v8H3v-8m10-10h8v8h-8V3m0 10h8v8h-8v-8"/>
+                </svg>
+                立即安装
+                <!-- 实时安装量 -->
+                <img src="https://img.shields.io/greasyfork/dt/471802?color=28a745&label=安装量&style=flat"
+                     alt="安装量"
+                     style="height: 24px; margin-left: 8px">
+            </a>
+
+            <!-- GitHub仓库按钮 -->
             <a href="https://github.com/scagogogo/mvnrepository-helper-UserScript"
-               class="btn btn-outline-light btn-lg" target="_blank">GitHub仓库</a>
+               class="btn btn-dark btn-lg d-flex align-items-center"
+               target="_blank"
+               style="gap: 8px">
+                <!-- GitHub图标 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12"/>
+                </svg>
+                GitHub仓库
+                <!-- 实时Star数 -->
+                <img src="https://img.shields.io/github/stars/scagogogo/mvnrepository-helper-UserScript?color=0366d6&label=Stars&style=flat"
+                     alt="Stars"
+                     style="height: 24px">
+            </a>
         </div>
     </div>
 </div>
 
 <!-- 动态演示 -->
-<section id="demo" class="container">
-    <div class="demo-video">
+<section id="demo" class="container my-5">
+    <!-- 新增标题 -->
+    <h2 class="text-center display-5 mb-4 fw-bold text-dark">
+        <span class="text-primary">功能演示：</span>
+        自动检测JDK版本，<span class="text-success">告别兼容性问题</span>
+    </h2>
+
+    <div class="demo-video shadow-lg rounded-3 overflow-hidden">
         <iframe src="//player.bilibili.com/player.html?bvid=BV13fkgYaEDn&high_quality=1&autoplay=0"
                 scrolling="no"
                 frameborder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 width="1280"
-                height="720">
+                height="720"
+                loading="lazy">
         </iframe>
     </div>
 </section>
