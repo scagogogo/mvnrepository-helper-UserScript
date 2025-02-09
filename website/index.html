@@ -12,15 +12,17 @@
             padding: 4rem 2rem;
             margin-bottom: 2rem;
         }
+
         .demo-video {
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
             margin: 4rem 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             overflow: hidden;
         }
+
         .demo-video iframe {
             position: absolute;
             top: 0;
@@ -29,35 +31,62 @@
             height: 100%;
             border: none;
         }
+
         .screenshot-carousel {
             margin: 4rem auto;
             max-width: 1200px;
             border-radius: 12px;
             overflow: hidden;
         }
+
         .carousel-item img {
             width: 100%;
             height: 500px;
             object-fit: contain;
             background: #f8f9fa;
         }
+
         .feature-card {
             transition: transform 0.2s;
             border: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .feature-card:hover {
             transform: translateY(-5px);
         }
+
         .badge-container {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin: 1rem 0;
         }
+
         .highlight-section {
             background: #f8f9fa;
             padding: 4rem 0;
+        }
+
+        /* 指示点样式增强 */
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 6px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid transparent;
+        }
+
+        .carousel-indicators .active {
+            background-color: #3498db;
+            border-color: #fff;
+        }
+
+        /* 手动控制按钮悬停效果 */
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
         }
     </style>
 </head>
@@ -96,8 +125,13 @@
 <!-- 动态演示 -->
 <section id="demo" class="container">
     <div class="demo-video">
-        <iframe src="//player.bilibili.com/player.html?bvid=BV13fkgYaEDn"
-                scrolling="no" frameborder="0" allowfullscreen></iframe>
+        <iframe src="//player.bilibili.com/player.html?bvid=BV13fkgYaEDn&high_quality=1&autoplay=0"
+                scrolling="no"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                width="1280"
+                height="720">
+        </iframe>
     </div>
 </section>
 
@@ -105,8 +139,27 @@
 <section id="features" class="highlight-section">
     <div class="container py-5">
         <h2 class="text-center mb-5">核心功能展示</h2>
+
+        <!-- 新增手动控制按钮组 -->
+        <div class="text-center mb-4">
+            <button type="button" class="btn btn-primary mx-2" data-bs-target="#screenshotCarousel"
+                    data-bs-slide="prev">上一张
+            </button>
+            <button type="button" class="btn btn-primary mx-2" data-bs-target="#screenshotCarousel"
+                    data-bs-slide="next">下一张
+            </button>
+        </div>
+
         <div id="screenshotCarousel" class="carousel slide screenshot-carousel" data-bs-ride="carousel">
+            <!-- 新增指示器 -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#screenshotCarousel" data-bs-slide-to="0" class="active"
+                        aria-current="true"></button>
+                <button type="button" data-bs-target="#screenshotCarousel" data-bs-slide-to="1"></button>
+            </div>
+
             <div class="carousel-inner">
+                <!-- 原有轮播项保持不变 -->
                 <div class="carousel-item active">
                     <img src="https://raw.githubusercontent.com/scagogogo/mvnrepository-helper-UserScript/main/data/demo-video.gif"
                          alt="版本列表页演示">
@@ -124,10 +177,14 @@
                     </div>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#screenshotCarousel" data-bs-slide="prev">
+
+            <!-- 原有箭头控件保持不变 -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#screenshotCarousel"
+                    data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#screenshotCarousel" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#screenshotCarousel"
+                    data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
             </button>
         </div>
@@ -143,8 +200,11 @@
                 <div class="p-4">
                     <h4>推荐方式：油猴商店安装</h4>
                     <ol>
-                        <li>安装<a href="https://chromewebstore.google.com/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo" target="_blank">Tampermonkey插件</a></li>
-                        <li>访问<a href="https://greasyfork.org/zh-CN/scripts/471802-repo1-maven-org-helper" target="_blank">脚本页面</a>点击安装</li>
+                        <li>安装<a href="https://chromewebstore.google.com/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo"
+                                   target="_blank">Tampermonkey插件</a></li>
+                        <li>访问<a href="https://greasyfork.org/zh-CN/scripts/471802-repo1-maven-org-helper"
+                                   target="_blank">脚本页面</a>点击安装
+                        </li>
                     </ol>
                     <h4 class="mt-4">开发者安装</h4>
                     <pre class="bg-dark text-light p-3 rounded"><code>
