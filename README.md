@@ -2,6 +2,8 @@
 
 简体中文 | [English](./README_en.md)
 
+官网： https://scagogogo.github.io/mvnrepository-helper-UserScript/
+
 GitHub仓库：https://github.com/scagogogo/mvnrepository-helper-UserScript
 
 介绍视频： https://www.bilibili.com/video/BV13fkgYaEDn
