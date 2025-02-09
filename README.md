@@ -16,6 +16,12 @@ GitHub仓库：https://github.com/scagogogo/mvnrepository-helper-UserScript
 
 <img src="data/demo-video.gif">
 
+优势：
+
+- 缓存
+- 支持所有仓库，而不仅仅是中央仓库
+- 
+
 # 二、安装
 
 ## 2.1 从油猴商店安装（推荐方式）
