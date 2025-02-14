@@ -8,6 +8,8 @@ class FloatBallComponent {
     constructor(options = {}) {
         this.concurrency = options.defaultConcurrency || 3;
         this.onSave = options.onSave || null;
+        // 定时器引用
+        this.refreshInterval = null
         this.initStyles();
         this.initDOM();
         this.bindEvents();
@@ -205,18 +207,16 @@ class FloatBallComponent {
         this.input.value = this.concurrency;
         this.input.focus();
 
-        try {
-            const [size1, size2] = await Promise.all([
-                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'gav-jar-information-storage'),
-                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'repo-information-storage')
-            ]);
-            const total = size1 + size2;
-            const formatted = this.formatBytes(total);
-            this.dialog.querySelector('#storage-size').textContent = formatted;
-        } catch (error) {
-            console.error('存储计算失败:', error);
-            this.dialog.querySelector('#storage-size').textContent = '获取失败';
-        }
+        // 清除已有定时器
+        if(this.refreshInterval) clearInterval(this.refreshInterval);
+
+        // 立即执行首次刷新
+        await this.refreshStorageUsage();
+
+        // 设置定时刷新（每5秒）
+        this.refreshInterval = setInterval(() => {
+            this.refreshStorageUsage();
+        }, 1000);
     }
 
     // 关闭设置窗口
@@ -230,6 +230,12 @@ class FloatBallComponent {
         }
         this.mask.style.display = 'none';
         this.dialog.style.display = 'none';
+
+        // 关闭时清除定时器
+        if(this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
     }
 
     formatBytes(bytes) {
@@ -246,7 +252,8 @@ class FloatBallComponent {
                 this.clearObjectStore('mvnrepository-helper-UserScript', 'gav-jar-information-storage'),
                 this.clearObjectStore('mvnrepository-helper-UserScript', 'repo-information-storage')
             ]);
-            this.dialog.querySelector('#storage-size').textContent = '0 Bytes';
+            // 清空后立即刷新显示
+            await this.refreshStorageUsage();
             console.log('缓存清空成功');
         } catch (error) {
             console.error('清空缓存失败:', error);
@@ -269,6 +276,21 @@ class FloatBallComponent {
                 clearRequest.onerror = () => reject(clearRequest.error);
             };
         });
+    }
+
+    async refreshStorageUsage() {
+        try {
+            const [size1, size2] = await Promise.all([
+                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'gav-jar-information-storage'),
+                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'repo-information-storage')
+            ]);
+            const total = size1 + size2;
+            const formatted = this.formatBytes(total);
+            this.dialog.querySelector('#storage-size').textContent = formatted;
+        } catch (error) {
+            console.error('存储刷新失败:', error);
+            this.dialog.querySelector('#storage-size').textContent = '刷新失败';
+        }
     }
 
 }
