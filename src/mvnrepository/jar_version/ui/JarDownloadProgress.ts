@@ -8,6 +8,7 @@
  * progressHandler.removeProgress();
  * ```
  */
+import {logger} from "../../../logger/Logger";
 
 export default class JarDownloadProgress {
     private taskId: string;
@@ -67,7 +68,7 @@ export default class JarDownloadProgress {
                 this.progressLabelElt.textContent = `Jar Downloaded ${percentComplete.toFixed(2)}% (${loaded} / ${total} Bytes)`;
             }
         } else {
-            console.log('Download size is unknown');
+            logger.debug('Download size is unknown');
         }
     }
 

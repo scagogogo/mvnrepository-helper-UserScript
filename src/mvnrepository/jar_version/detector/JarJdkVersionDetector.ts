@@ -11,19 +11,6 @@ import {logger} from "../../../logger/Logger";
 // @ts-ignore
 import JSZip from 'jszip';
 
-// 定义进度事件细节类型
-interface ProgressDetail {
-    loaded: number;
-    total: number;
-    lengthComputable: boolean;
-}
-
-// 定义自定义事件类型
-declare global {
-    interface HTMLElementEventMap {
-        progress: CustomEvent<ProgressDetail>;
-    }
-}
 
 /**
  * JDK版本检测器类，用于解析JAR包的JDK版本信息
@@ -132,12 +119,11 @@ export default class JarJdkVersionDetector {
         jarUrl: string
     ): Promise<GMXMLHttpRequestResponse> {
         return new Promise((resolve, reject) => {
-            const progressChannel = new EventTarget();
             let lastProgress = 0;
 
             // 定义 handleProgress 函数
             const jarDownloadProgress = new JarDownloadProgress(elementId);
-            const handleProgress = (event: Event): void => {
+            const handleProgress = (event: ProgressEvent): void => {
                 const progress = event as unknown as { loaded: number; total: number; lengthComputable: boolean };
                 if (Date.now() - lastProgress > 100) {
                     jarDownloadProgress.showProgress(progress);
@@ -150,19 +136,16 @@ export default class JarJdkVersionDetector {
                 url: jarUrl,
                 responseType: "arraybuffer",
                 onload: (response: GMXMLHttpRequestResponse): void => {
-                    progressChannel.removeEventListener("progress", handleProgress);
                     resolve(response);
                 },
                 onerror: (error: Error): void => {
-                    progressChannel.removeEventListener("progress", handleProgress);
                     reject(error);
                 },
-                onprogress: (event: Event): void => {
-                    progressChannel.dispatchEvent(new CustomEvent("progress", {detail: event}));
+                onprogress: (progress: ProgressEvent): void => {
+                    handleProgress(progress);
                 }
             });
 
-            progressChannel.addEventListener("progress", handleProgress);
         });
     }
 

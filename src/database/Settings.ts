@@ -85,6 +85,9 @@ export default class Settings {
      */
     private static handleDbRequest(request: IDBRequest): Promise<void> {
         return new Promise((resolve, reject) => {
+
+            debugger;
+
             request.onsuccess = (event: Event) => {
                 console.log("数据库操作成功");
                 resolve();

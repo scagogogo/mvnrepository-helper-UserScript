@@ -68,7 +68,9 @@ export default class ComponentVersionListEnhancer {
         if (!groupId || !artifactId) return;
 
         const settings = await Settings.findSettings() ?? new Settings();
-        const threadPool = new PromiseThreadPool(settings.concurrency || this.DEFAULT_CONCURRENCY);
+        const threadNum = settings.concurrency || this.DEFAULT_CONCURRENCY;
+        logger.debug(`线程池并发：${threadNum}`);
+        const threadPool = new PromiseThreadPool(threadNum);
 
         table.find('tbody tr td').each((index, element) => {
             const versionLink = $(element).find('.vbtn');

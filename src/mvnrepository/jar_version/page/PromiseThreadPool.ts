@@ -44,7 +44,7 @@ export default class PromiseThreadPool {
      * 构造函数
      * @param maxConcurrency 最大并发数，默认为4
      */
-    constructor(maxConcurrency: number = 4) {
+    constructor(maxConcurrency: number) {
         this.maxConcurrency = maxConcurrency;
         this.activeCount = 0;
         this.queue = [];
@@ -56,22 +56,11 @@ export default class PromiseThreadPool {
      * @param task 任务，可以是Promise对象、返回Promise的函数或async函数
      * @returns Promise<any> 任务的Promise
      */
-    public submit(task: any): Promise<any> {
+    public submit(task: () => Promise<any>): Promise<any> {
         return new Promise((resolve, reject) => {
             const wrappedTask = async () => {
                 try {
-                    let promise: Promise<any>;
-
-                    // 处理不同任务类型
-                    if (typeof task === 'function') {
-                        promise = task(); // 执行函数获取promise
-                    } else if (task instanceof Promise) {
-                        promise = task; // 直接使用已有promise
-                    } else {
-                        throw new Error('Invalid task type');
-                    }
-
-                    const result = await promise;
+                    const result = await task(); // 直接执行函数获取Promise
                     resolve(result);
                 } catch (error) {
                     reject(error);
