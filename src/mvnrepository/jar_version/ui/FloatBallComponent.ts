@@ -216,16 +216,16 @@ export default class FloatBallComponent {
         this.dialog.className = 'float-ball-dialog';
         this.dialog.innerHTML = `
       <div class="float-ball-dialog-header">
-        <div class="float-ball-dialog-title">并发设置</div>
+        <div class="float-ball-dialog-title">Concurrency Settings</div>
         <button class="float-ball-close-btn">×</button>
       </div>
-      <div class="float-ball-alert">⚠️ 注意并发数修改后要刷新页面才能生效</div>
+      <div class="float-ball-alert">⚠️ Note: You need to refresh the page after modifying <br/> the concurrency number for the changes to take effect.</div>
       <input type="number" class="float-ball-input"
              min="1" step="1" value="${this.concurrency}">
-      <button class="float-ball-confirm-btn">保存设置</button>
+      <button class="float-ball-confirm-btn">Save</button>
       <div class="float-ball-storage-info">
-          缓存占用存储空间：<span id="storage-size">计算中...</span>
-          <button class="float-ball-clear-btn">清空缓存</button>
+          Cache Occupied Storage Space: <span id="storage-size">Calculating...</span>
+          <button class="float-ball-clear-btn">Clear Cache</button>
       </div>
     `;
 
@@ -246,7 +246,7 @@ export default class FloatBallComponent {
         });
 
         this.dialog.querySelector('.float-ball-clear-btn')!.addEventListener('click', () => {
-            if (confirm('确定要清空所有缓存数据吗？此操作不可恢复！')) {
+            if (confirm('Are you sure you want to clear all cache data? This action cannot be undone!')) {
                 this.clearStorage();
             }
         });
