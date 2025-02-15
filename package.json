@@ -13,6 +13,7 @@
   "author": "CC11001100 <CC11001100@qq.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/greasemonkey": "^4.0.7",
     "current-script-polyfill": "^1.0.0",
     "idb": "^8.0.0",
     "jszip": "^3.10.1",
@@ -21,5 +22,9 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.9.0"
+  },
+  "dependencies": {
+    "@types/jquery": "^3.5.32",
+    "jquery": "^3.7.1"
   }
 }

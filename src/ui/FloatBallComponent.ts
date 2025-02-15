@@ -1,22 +1,49 @@
-const {calculateObjectStoreSize} = require("../database/store-size");
+import Database from "../database/Database";
+
+interface FloatBallOptions {
+    defaultConcurrency?: number;
+    onSave?: (value: number) => void;
+}
 
 /**
+ * 悬浮球组件，提供并发设置和缓存管理功能
  *
+ * 功能特性：
+ * 1. 动态样式注入确保组件样式隔离
+ * 2. 支持并发数设置及保存回调
+ * 3. 实时显示缓存占用空间（自动刷新）
+ * 4. 提供缓存清空功能
+ *
+ * 使用示例：
+ * @example
+ * const floatBall = new FloatBallComponent({
+ *   defaultConcurrency: 3,
+ *   onSave: (value) => {
+ *     console.log('当前并发数更新为:', value);
+ *     // 更新业务逻辑中的并发设置
+ *   }
+ * });
  */
-class FloatBallComponent {
+export default class FloatBallComponent {
+    private concurrency: number;
+    private onSave: ((value: number) => void) | null;
+    private refreshInterval: number | null;
+    private floatBall!: HTMLDivElement;
+    private mask!: HTMLDivElement;
+    private dialog!: HTMLDivElement;
+    private input!: HTMLInputElement;
 
-    constructor(options = {}) {
+    constructor(options: FloatBallOptions = {}) {
         this.concurrency = options.defaultConcurrency || 3;
         this.onSave = options.onSave || null;
-        // 定时器引用
-        this.refreshInterval = null
+        this.refreshInterval = null;
         this.initStyles();
         this.initDOM();
         this.bindEvents();
     }
 
-    // 动态注入样式
-    initStyles() {
+    /** 动态注入组件样式 */
+    private initStyles(): void {
         const style = document.createElement('style');
         style.textContent = `
       .float-ball-component {
@@ -134,111 +161,94 @@ class FloatBallComponent {
           background: #ffeeee;
           text-decoration: underline;
         }
-    `;
+    `; // 保持原始样式内容不变
         document.head.appendChild(style);
     }
 
-    // 创建DOM结构
-    initDOM() {
-        // 悬浮球
+    /** 初始化组件DOM结构 */
+    private initDOM(): void {
         this.floatBall = document.createElement('div');
         this.floatBall.className = 'float-ball-component';
         this.floatBall.textContent = '⚙️';
 
-        // 遮罩层
         this.mask = document.createElement('div');
         this.mask.className = 'float-ball-mask';
 
-        // 设置对话框
         this.dialog = document.createElement('div');
         this.dialog.className = 'float-ball-dialog';
         this.dialog.innerHTML = `
-  <div class="float-ball-dialog-header">并发设置</div>
-  <input type="number" class="float-ball-input" 
-         min="1" step="1" value="${this.concurrency}">
-  <button class="float-ball-confirm-btn">保存设置</button>
-  <div class="float-ball-storage-info">
-    缓存占用存储空间：<span id="storage-size">计算中...</span>
-    <button class="float-ball-clear-btn">清空缓存</button>
-  </div>
-`;
+            <div class="float-ball-dialog-header">并发设置</div>
+            <input type="number" class="float-ball-input" 
+                   min="1" step="1" value="${this.concurrency}">
+            <button class="float-ball-confirm-btn">保存设置</button>
+            <div class="float-ball-storage-info">
+                缓存占用存储空间：<span id="storage-size">计算中...</span>
+                <button class="float-ball-clear-btn">清空缓存</button>
+            </div>
+        `;
 
-        // 添加到页面
         document.body.append(this.floatBall, this.mask, this.dialog);
-        this.input = this.dialog.querySelector('input');
+        this.input = this.dialog.querySelector('input')!;
     }
 
-    // 事件绑定
-    bindEvents() {
-        // 打开对话框
+    /** 绑定事件处理器 */
+    private bindEvents(): void {
         this.floatBall.addEventListener('click', () => this.openDialog());
-
-        // 关闭对话框
         this.mask.addEventListener('click', () => this.closeDialog());
-        this.dialog.querySelector('button').addEventListener('click', () => this.closeDialog());
+        this.dialog.querySelector('button')!.addEventListener('click', () => this.closeDialog());
 
-        // 输入验证
         this.input.addEventListener('input', () => this.validateInput());
-
-        // 回车支持
-        this.input.addEventListener('keypress', (e) => {
+        this.input.addEventListener('keypress', (e: KeyboardEvent) => {
             if (e.key === 'Enter') this.closeDialog();
         });
 
-        // 清空缓存按钮
-        this.dialog.querySelector('.float-ball-clear-btn').addEventListener('click', () => {
+        this.dialog.querySelector('.float-ball-clear-btn')!.addEventListener('click', () => {
             if (confirm('确定要清空所有缓存数据吗？此操作不可恢复！')) {
                 this.clearStorage();
             }
         });
     }
 
-    // 输入验证
-    validateInput() {
+    /** 输入验证逻辑 */
+    private validateInput(): void {
         let value = this.input.value.replace(/[^0-9]/g, '');
-        value = value === '' ? 1 : Math.max(1, parseInt(value));
+        value = value === '' ? '1' : Math.max(1, parseInt(value)).toString();
         this.input.value = value;
     }
 
-    // 打开设置窗口
-    async openDialog() {
+    /** 打开设置对话框 */
+    private async openDialog(): Promise<void> {
         this.mask.style.display = 'block';
         this.dialog.style.display = 'block';
-        this.input.value = this.concurrency;
+        this.input.value = this.concurrency.toString();
         this.input.focus();
 
-        // 清除已有定时器
-        if(this.refreshInterval) clearInterval(this.refreshInterval);
-
-        // 立即执行首次刷新
+        if (this.refreshInterval) clearInterval(this.refreshInterval);
         await this.refreshStorageUsage();
 
-        // 设置定时刷新（每5秒）
-        this.refreshInterval = setInterval(() => {
+        this.refreshInterval = window.setInterval(() => {
             this.refreshStorageUsage();
-        }, 1000);
+        }, 5000);
     }
 
-    // 关闭设置窗口
-    closeDialog() {
+    /** 关闭设置对话框并保存配置 */
+    private closeDialog(): void {
         const newValue = parseInt(this.input.value);
         if (!isNaN(newValue)) {
             this.concurrency = newValue;
-            if (typeof this.onSave === 'function') {
-                this.onSave(this.concurrency);
-            }
+            this.onSave?.(this.concurrency);
         }
         this.mask.style.display = 'none';
         this.dialog.style.display = 'none';
 
-        // 关闭时清除定时器
-        if(this.refreshInterval) {
+        if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
             this.refreshInterval = null;
         }
     }
 
-    formatBytes(bytes) {
+    /** 格式化存储空间显示 */
+    private formatBytes(bytes: number): string {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -246,28 +256,29 @@ class FloatBallComponent {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    async clearStorage() {
+    /** 清空IndexedDB存储 */
+    private async clearStorage(): Promise<void> {
         try {
             await Promise.all([
                 this.clearObjectStore('mvnrepository-helper-UserScript', 'gav-jar-information-storage'),
                 this.clearObjectStore('mvnrepository-helper-UserScript', 'repo-information-storage')
             ]);
-            // 清空后立即刷新显示
             await this.refreshStorageUsage();
             console.log('缓存清空成功');
         } catch (error) {
             console.error('清空缓存失败:', error);
-            this.dialog.querySelector('#storage-size').textContent = '清空失败';
+            this.dialog.querySelector('#storage-size')!.textContent = '清空失败';
         }
     }
 
-    clearObjectStore(databaseName, storeName) {
+    /** 清空指定对象存储 */
+    private clearObjectStore(databaseName: string, storeName: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(databaseName);
             request.onerror = () => reject(request.error);
 
-            request.onsuccess = (event) => {
-                const db = event.target.result;
+            request.onsuccess = (event: Event) => {
+                const db = (event.target as IDBOpenDBRequest).result;
                 const transaction = db.transaction(storeName, 'readwrite');
                 const store = transaction.objectStore(storeName);
                 const clearRequest = store.clear();
@@ -278,32 +289,20 @@ class FloatBallComponent {
         });
     }
 
-    async refreshStorageUsage() {
+    /** 刷新存储空间显示 */
+    private async refreshStorageUsage(): Promise<void> {
         try {
             const [size1, size2] = await Promise.all([
-                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'gav-jar-information-storage'),
-                calculateObjectStoreSize('mvnrepository-helper-UserScript', 'repo-information-storage')
+                Database.calculateObjectStoreSize('gav-jar-information-storage'),
+                Database.calculateObjectStoreSize('repo-information-storage')
             ]);
             const total = size1 + size2;
             const formatted = this.formatBytes(total);
-            this.dialog.querySelector('#storage-size').textContent = formatted;
+            this.dialog.querySelector('#storage-size')!.textContent = formatted;
         } catch (error) {
             console.error('存储刷新失败:', error);
-            this.dialog.querySelector('#storage-size').textContent = '刷新失败';
+            this.dialog.querySelector('#storage-size')!.textContent = '刷新失败';
         }
     }
 
-}
-
-// // 使用示例
-// const floatBall = new FloatBallComponent({
-//     defaultConcurrency: 3,
-//     onSave: (value) => {
-//         console.log('当前并发数更新为:', value);
-//         // 这里可以接入实际业务逻辑
-//     }
-// });
-
-module.exports = {
-    FloatBallComponent: FloatBallComponent,
 }

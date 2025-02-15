@@ -1,2 +1,6 @@
-alert("测试OK");
-console.log("Hello, TypeScript!");
+import AppInitializer from "./init/AppInitializer";
+
+(async () => {
+    await AppInitializer.init();
+})();
+

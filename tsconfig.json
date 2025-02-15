@@ -14,8 +14,9 @@
     "jsx": "preserve",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["jquery", "greasemonkey"]  // 显式指定使用 jQuery 的类型定义
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types.d.ts"],
   "exclude": ["node_modules"]
 }
