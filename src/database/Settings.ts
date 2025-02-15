@@ -29,9 +29,7 @@ export default class Settings {
     static async save(settings: Settings): Promise<void> {
         const transaction = Database.getDatabase().transaction([Settings.STORE_NAME], "readwrite");
         const objectStore = transaction.objectStore(Settings.STORE_NAME);
-        const request = await objectStore.put(settings);
-
-        await Settings.handleDbRequest(request);
+        await objectStore.put(settings);
     }
 
     /**
@@ -49,9 +47,7 @@ export default class Settings {
     static async update(settings: Settings): Promise<void> {
         const transaction = Database.getDatabase().transaction([Settings.STORE_NAME], "readwrite");
         const objectStore = transaction.objectStore(Settings.STORE_NAME);
-        const request = await objectStore.put(settings);
-
-        await Settings.handleDbRequest(request);
+        await objectStore.put(settings);
     }
 
     /**
@@ -77,26 +73,4 @@ export default class Settings {
         }
     }
 
-    /**
-     * 统一处理数据库请求
-     *
-     * @param request - IndexedDB请求对象
-     * @returns Promise<void>
-     */
-    private static handleDbRequest(request: IDBRequest): Promise<void> {
-        return new Promise((resolve, reject) => {
-
-            debugger;
-
-            request.onsuccess = (event: Event) => {
-                console.log("数据库操作成功");
-                resolve();
-            };
-
-            request.onerror = (event: Event) => {
-                console.error("数据库操作失败:", (event.target as IDBRequest).error);
-                reject((event.target as IDBRequest).error);
-            };
-        });
-    }
 }

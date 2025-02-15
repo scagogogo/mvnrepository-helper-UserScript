@@ -1,4 +1,4 @@
-import Database from "../database/Database";
+import Database from "../../../database/Database";
 
 interface FloatBallOptions {
     defaultConcurrency?: number;
@@ -92,14 +92,52 @@ export default class FloatBallComponent {
         z-index: 1002;
         display: none;
         min-width: 300px;
+        display: none;
       }
 
       .float-ball-dialog-header {
-        font-size: 20px;
+        position: relative;
+        display: flex;
+        align-items: center;
         margin-bottom: 20px;
+      }
+
+      .float-ball-dialog-title {
+        font-size: 20px;
         color: #333;
         border-bottom: 2px solid #eee;
         padding-bottom: 10px;
+        margin: 0;
+        flex: 1;
+        margin-right: 10px;
+      }
+
+      .float-ball-close-btn {
+        width: 20px;
+        height: 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        top: -5px;
+        right: 0;
+        font-size: 12px;
+        color: #666;
+        transition: color 0.3s;
+      }
+
+      .float-ball-close-btn:hover {
+        color: #333;
+      }
+
+      .float-ball-alert {
+        font-size: 14px;
+        color: #ff4d4d;
+        margin: 0;
+        padding: 8px;
+        background-color: #ffe8e8;
+        border-radius: 4px;
+        text-align: center;
       }
 
       .float-ball-input {
@@ -177,15 +215,19 @@ export default class FloatBallComponent {
         this.dialog = document.createElement('div');
         this.dialog.className = 'float-ball-dialog';
         this.dialog.innerHTML = `
-            <div class="float-ball-dialog-header">并发设置</div>
-            <input type="number" class="float-ball-input" 
-                   min="1" step="1" value="${this.concurrency}">
-            <button class="float-ball-confirm-btn">保存设置</button>
-            <div class="float-ball-storage-info">
-                缓存占用存储空间：<span id="storage-size">计算中...</span>
-                <button class="float-ball-clear-btn">清空缓存</button>
-            </div>
-        `;
+      <div class="float-ball-dialog-header">
+        <div class="float-ball-dialog-title">并发设置</div>
+        <button class="float-ball-close-btn">×</button>
+      </div>
+      <div class="float-ball-alert">⚠️ 注意并发数修改后要刷新页面才能生效</div>
+      <input type="number" class="float-ball-input"
+             min="1" step="1" value="${this.concurrency}">
+      <button class="float-ball-confirm-btn">保存设置</button>
+      <div class="float-ball-storage-info">
+          缓存占用存储空间：<span id="storage-size">计算中...</span>
+          <button class="float-ball-clear-btn">清空缓存</button>
+      </div>
+    `;
 
         document.body.append(this.floatBall, this.mask, this.dialog);
         this.input = this.dialog.querySelector('input')!;
@@ -195,7 +237,8 @@ export default class FloatBallComponent {
     private bindEvents(): void {
         this.floatBall.addEventListener('click', () => this.openDialog());
         this.mask.addEventListener('click', () => this.closeDialog());
-        this.dialog.querySelector('button')!.addEventListener('click', () => this.closeDialog());
+        this.dialog.querySelector('button.float-ball-close-btn')!.addEventListener('click', () => this.closeDialog());
+        this.dialog.querySelector('button.float-ball-confirm-btn')!.addEventListener('click', () => this.closeDialog());
 
         this.input.addEventListener('input', () => this.validateInput());
         this.input.addEventListener('keypress', (e: KeyboardEvent) => {
@@ -304,5 +347,4 @@ export default class FloatBallComponent {
             this.dialog.querySelector('#storage-size')!.textContent = '刷新失败';
         }
     }
-
 }

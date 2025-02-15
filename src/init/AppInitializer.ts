@@ -3,7 +3,7 @@ import Settings from "../database/Settings";
 import ExpandTextUtil from "../repo1/expand-text/ExpandTextUtil";
 import QuickJumpManager from "../repo1/quick-jump/QuickJumpManager";
 import {RepoInformationStorage} from "../database/RepoInformationStorage";
-import FloatBallComponent from "../ui/FloatBallComponent";
+import FloatBallComponent from "../mvnrepository/jar_version/ui/FloatBallComponent";
 import JarJdkVersionInitializer from "../mvnrepository/jar_version/JarJdkVersionInitializer";
 import Database from "../database/Database";
 import {logger, LogLevel} from "../logger/Logger";
