@@ -7,6 +7,7 @@ import {RepoInformation, RepoInformationStorage} from "../../../database/RepoInf
 import PromiseThreadPool from "./PromiseThreadPool";
 import Settings from "../../../database/Settings";
 import {logger} from "../../../logger/Logger";
+import JarDownloadProgress from "../ui/JarDownloadProgress";
 
 /**
  * 组件版本列表页面增强处理器

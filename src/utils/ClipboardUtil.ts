@@ -1,3 +1,5 @@
+import {logger} from "../logger/Logger";
+
 /**
  * 剪贴板操作工具类
  * 需要在HTTPS环境下运行，或者在本地开发时localhost
@@ -40,7 +42,7 @@ export default class ClipboardUtil {
         try {
             // 尝试写入剪贴板
             await navigator.clipboard.writeText(text);
-            console.log(`剪切板内容已更新为：${text}`);
+            logger.debug(`剪切板内容已更新为：${text}`);
 
             // 成功时无返回值，但Promise会resolve
         } catch (err) {
@@ -54,13 +56,13 @@ export default class ClipboardUtil {
             // 处理其他DOM异常（如权限被拒绝）
             if (err instanceof DOMException) {
                 const errorMessage = `剪贴板操作被拒绝：${err.message}`;
-                console.error(errorMessage);
+                logger.error(errorMessage);
                 throw new DOMException(errorMessage, err.name);
             }
 
             // 处理未知错误
             const errorMessage = `无法使用剪切板写入功能: ${err instanceof Error ? err.message : '未知错误'}`;
-            console.error(errorMessage);
+            logger.error(errorMessage);
             throw new Error(errorMessage);
         }
     }

@@ -69,15 +69,15 @@ export default class JarClassAnalyzer {
         resultElement.textContent = `Jar Class: ${jdkVersion}`;
 
         // 创建悬浮提示框
-        const tooltip = this.createTooltip(classId);
         const messages = await this.buildVersionDistribution(metric, 50);
+        const tooltip = this.createTooltip(classId, metric, messages);
 
         // 绑定交互事件
         this.bindInteractions(resultElement, tooltip, messages);
     }
 
     /** 创建悬浮提示框元素 */
-    private static createTooltip(parentId: string): HTMLDivElement {
+    private static createTooltip(parentId: string, metric: Map<number, number>, messages: string[]): HTMLDivElement {
         const tooltip = document.createElement("div");
         tooltip.id = `${parentId}-tips`;
         tooltip.style.cssText = `
@@ -88,11 +88,26 @@ export default class JarClassAnalyzer {
             padding: 12px;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 400px;
+            max-width: 800px;
             z-index: 1000;
             font-family: system-ui;
         `;
         document.body.appendChild(tooltip);
+
+        // 标题说明
+        const total = Array.from(metric).reduce((acc, [key, value]) => acc + value, 0);
+        const title = document.createElement("h3");
+        title.innerText = `JVM version distribution of Class files in this Jar (Total ${total} class files)`;
+        tooltip.appendChild(title);
+
+        // 分布情况
+        for (let msg of messages) {
+            const percent = document.createElement("li");
+            percent.style.cssText = "padding: 4px;";
+            percent.textContent = msg;
+            tooltip.appendChild(percent);
+        }
+
         return tooltip;
     }
 

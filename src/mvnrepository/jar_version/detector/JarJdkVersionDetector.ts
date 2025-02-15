@@ -136,10 +136,11 @@ export default class JarJdkVersionDetector {
             let lastProgress = 0;
 
             // 定义 handleProgress 函数
+            const jarDownloadProgress = new JarDownloadProgress(elementId);
             const handleProgress = (event: Event): void => {
                 const progress = event as unknown as { loaded: number; total: number; lengthComputable: boolean };
                 if (Date.now() - lastProgress > 100) {
-                    new JarDownloadProgress(elementId).showProgress(progress);
+                    jarDownloadProgress.showProgress(progress);
                     lastProgress = Date.now();
                 }
             };
