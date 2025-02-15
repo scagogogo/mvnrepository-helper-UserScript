@@ -6,6 +6,7 @@ import {RepoInformationStorage} from "../database/RepoInformationStorage";
 import FloatBallComponent from "../ui/FloatBallComponent";
 import JarJdkVersionInitializer from "../mvnrepository/jar_version/JarJdkVersionInitializer";
 import Database from "../database/Database";
+import {logger, LogLevel} from "../logger/Logger";
 
 /**
  * 初始化应用
@@ -15,6 +16,10 @@ export default class AppInitializer {
      * 初始化方法
      */
     static async init(): Promise<void> {
+
+        // TODO 开发的时候把日志设置为debug级别
+        logger.setLevel(LogLevel.DEBUG);
+
         // 根据不同的域名启用不同的逻辑
         switch (window.location.hostname) {
             case 'repo1.maven.org':
@@ -39,7 +44,7 @@ export default class AppInitializer {
                 });
 
                 // Java开发者都会用到的这个域名
-                JarJdkVersionInitializer.initJarJdkVersion();
+                await JarJdkVersionInitializer.initJarJdkVersion();
                 break;
         }
     }

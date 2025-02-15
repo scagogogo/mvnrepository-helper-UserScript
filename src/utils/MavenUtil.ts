@@ -20,14 +20,14 @@ export default class MavenUtil {
      * @returns 完整的Jar包下载URL
      */
     static buildJarUrl(groupId: string, artifactId: string, version: string): string {
-        return `https://repo1.maven.org/maven2${this.buildGavJarPath(groupId, artifactId, version)}`;
+        return `https://repo1.maven.org/maven2/${this.buildGavJarPath(groupId, artifactId, version)}`;
     }
 
     /**
      * 构造GAV坐标对应的Jar文件路径
      *
      * @example
-     * // 返回 '/com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre.jar'
+     * // 返回 'com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre.jar'
      * buildGavJarPath('com.google.guava', 'guava', '32.1.3-jre')
      *
      * @param groupId    - Maven groupId，点分格式会被转换为路径
@@ -39,11 +39,19 @@ export default class MavenUtil {
      * @returns 符合Maven仓库规范的Jar文件路径
      */
     static buildGavJarPath(groupId: string, artifactId: string, version: string): string {
-        // 将 groupId 中的点转换为路径分隔符（如 com.example => com/example）
-        const groupPath = groupId.replace('.', '/');
+        // 验证输入参数
+        if (!groupId || !artifactId || !version) {
+            throw new Error("groupId, artifactId, and version must be non-empty strings.");
+        }
 
-        // 拼接完整的仓库路径（格式：groupId/artifactId/version/artifactId-version.jar）
-        return `/${groupPath}/${artifactId}/${version}/${artifactId}-${version}.jar`;
+        // 将 groupId 中的点转换为路径分隔符
+        const groupPath = groupId.replace(/\./g, "/");
+
+        // 拼接完整的仓库路径
+        const jarPath = `${groupPath}/${artifactId}/${version}/${artifactId}-${version}.jar`;
+
+        // 返回规范化后的路径
+        return jarPath;
     }
 
     // TODO 2024-11-24 13:31:47 构造更多的格式（例如pom文件路径、源码包路径等）

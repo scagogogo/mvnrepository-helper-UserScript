@@ -3,15 +3,15 @@
  *
  * 数字越小级别越低，数字越大级别越高
  */
-enum LogLevel {
+export enum LogLevel {
     DEBUG = 0,
     INFO = 1,
     WARN = 2,
     ERROR = 3
 }
 
-type LogLevelString = keyof typeof LogLevel;
-type LogLevelNumber = 0 | 1 | 2 | 3;
+export type LogLevelString = keyof typeof LogLevel;
+export type LogLevelNumber = 0 | 1 | 2 | 3;
 
 export class Logger {
     /** 日志器名称（用于区分不同模块的日志） */

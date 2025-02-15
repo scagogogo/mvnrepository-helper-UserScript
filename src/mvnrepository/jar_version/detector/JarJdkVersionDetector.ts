@@ -1,4 +1,3 @@
-import JSZip from "jszip";
 import MavenUtil from "../../../utils/MavenUtil";
 import ManifestParser from "../parser/ManifestParser";
 import JarClassParser from "../parser/JarClassParser";
@@ -8,6 +7,9 @@ import ErrorHandler from "../ui/ErrorHandler";
 import JarManifestAnalyzer from "../ui/JarManifestAnalyzer";
 import GavJarInformationStorage, {GavJarInformation} from "../../../database/GavJarInformationStorage";
 import {logger} from "../../../logger/Logger";
+
+// @ts-ignore
+import JSZip from 'jszip';
 
 // 定义进度事件细节类型
 interface ProgressDetail {
@@ -109,8 +111,9 @@ export default class JarJdkVersionDetector {
     ): Promise<void> {
         try {
             const targetUrl = jarUrl || MavenUtil.buildJarUrl(groupId, artifactId, version);
-            logger.debug(`开始请求Jar包：${targetUrl}`);
+            logger.debug(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, 开始请求Jar包，Jar URL：${targetUrl}`);
             const response = await this.fetchJarWithProgress(elementId, targetUrl);
+            logger.debug(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, Jar包请求完毕，开始解析Jar包信息`);
             await this.analyzeJarFile(groupId, artifactId, version, elementId)(response);
         } catch (error) {
             this.showRequestJarFailedMessage(elementId, jarUrl)(error as Error);
@@ -179,15 +182,18 @@ export default class JarJdkVersionDetector {
             new JarDownloadProgress(elementId).removeProgress();
 
             if (response.status !== 200) {
+                logger.error(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, Jar包请求失败：${response.status}`);
                 await ErrorHandler.show(elementId, `下载失败 HTTP ${response.status}`);
                 throw new Error(`HTTP ${response.status}`);
             }
 
             try {
-                const jarFile = await JSZip.loadAsync(response.response);
+                const jarFile = await new JSZip(response.response);
+                logger.debug(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, Jar包解析为JSZip文件`);
                 await this.analyzeManifest(groupId, artifactId, version, elementId, jarFile);
                 await this.analyzeClasses(groupId, artifactId, version, elementId, jarFile);
             } catch (parseError) {
+                logger.error(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, 解析Jar包信息失败：${(parseError as Error).message}`);
                 await ErrorHandler.show(elementId, `解析JAR文件失败: ${(parseError as Error).message}`);
                 throw parseError;
             }
@@ -209,13 +215,15 @@ export default class JarJdkVersionDetector {
         elementId: string,
         jarFile: JSZip
     ): Promise<void> {
+
         const metaFileName = "META-INF/MANIFEST.MF";
         const manifestEntry = jarFile.files[metaFileName];
-        const manifest = manifestEntry ? await manifestEntry.async("text") : "";
+        const manifest = manifestEntry ? await manifestEntry.asText() : "";
+
         const manifestResult = ManifestParser.parseBuildJdkVersion(manifest);
 
-
-        await new JarManifestAnalyzer(elementId, manifest, manifestResult.key, manifestResult.value).showJarManifestAnalyzeResult;
+        logger.debug(`groupId = ${groupId}, artifactId = ${artifactId}, version = ${version}, Jar包Manifest信息解析成功：${JSON.stringify(manifest)}`);
+        await new JarManifestAnalyzer(elementId, manifest, manifestResult.key, manifestResult.value).showJarManifestAnalyzeResult();
         await this.saveManifestInfo(groupId, artifactId, version, manifest);
     }
 
@@ -252,7 +260,7 @@ export default class JarJdkVersionDetector {
         jarFile: JSZip
     ): Promise<void> {
         const {metric, maxMajorVersion, maxMinorVersion} = JarClassParser.parseClassBuildJdkVersionMetric(jarFile);
-        JarClassAnalyzer.show(elementId, metric, maxMajorVersion, maxMinorVersion);
+        await JarClassAnalyzer.show(elementId, metric, maxMajorVersion, maxMinorVersion);
         await this.saveClassInfo(groupId, artifactId, version, metric, maxMajorVersion, maxMinorVersion);
     }
 
