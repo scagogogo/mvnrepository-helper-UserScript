@@ -1,4 +1,4 @@
-const {getDatabase} = require("./database");
+const {Database} = require("./Database");
 const {resolveJarJdkVersion} = require("../mvnrepository/jar_version/detector/jar-jdk-version-detector");
 
 const NAME = "repo-information-storage";
@@ -27,7 +27,7 @@ class RepoInformation {
  */
 async function saveRepoInformation(repoInformation) {
 
-    const request = await getDatabase().transaction([NAME], "readwrite")
+    const request = await Database.getDatabase().transaction([NAME], "readwrite")
         .objectStore(NAME)
         .put(repoInformation);
 
@@ -46,7 +46,7 @@ async function saveRepoInformation(repoInformation) {
  */
 async function updateRepoInformation(repoInformation) {
 
-    const request = await getDatabase().transaction([NAME], "readwrite")
+    const request = await Database.getDatabase().transaction([NAME], "readwrite")
         .objectStore(NAME)
         .put(repoInformation);
 
@@ -66,7 +66,7 @@ async function updateRepoInformation(repoInformation) {
  * @param id
  */
 async function findRepoInformation(id) {
-    return await getDatabase().transaction([NAME], "readonly").objectStore(NAME).get(id);
+    return await Database.getDatabase().transaction([NAME], "readonly").objectStore(NAME).get(id);
 }
 
 /**

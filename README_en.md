@@ -66,7 +66,7 @@ Or npm:
 npm run build
 ```
 
-The packaged file will be in `dist/index.js`. You can create a new Tampermonkey script with the contents of `dist/index.js`.
+The packaged file will be in `dist/back-index.js`. You can create a new Tampermonkey script with the contents of `dist/back-index.js`.
 
 ![image-20241216015544138](./README.assets/image-20241216015544138.png)
 # III. Detailed Feature Introduction

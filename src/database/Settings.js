@@ -1,4 +1,4 @@
-const {getDatabase} = require("./database");
+const {Database} = require("./Database");
 
 const NAME = "settings";
 
@@ -20,7 +20,7 @@ class Settings {
  */
 async function saveSettings(settings) {
 
-    const request = await getDatabase().transaction([NAME], "readwrite")
+    const request = await Database.getDatabase().transaction([NAME], "readwrite")
         .objectStore(NAME)
         .put(settings);
 
@@ -39,7 +39,7 @@ async function saveSettings(settings) {
  */
 async function updateSettings(settings) {
 
-    const request = await getDatabase().transaction([NAME], "readwrite")
+    const request = await Database.getDatabase().transaction([NAME], "readwrite")
         .objectStore(NAME)
         .put(settings);
 
@@ -58,7 +58,7 @@ async function updateSettings(settings) {
  *
  */
 async function findSettings() {
-    return await getDatabase().transaction([NAME], "readonly").objectStore(NAME).get(ID);
+    return await Database.getDatabase().transaction([NAME], "readonly").objectStore(NAME).get(ID);
 }
 
 module.exports = {

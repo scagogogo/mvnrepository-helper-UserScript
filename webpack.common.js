@@ -5,25 +5,19 @@ const fs = require("fs");
 
 module.exports = {
     entry: {
-        index: "./src/index.js"
+        index: "./src/index.ts"  // 修改入口文件为 .ts
     },
     output: {
-        // filename: "[name]-[hash].js",
         filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
     },
     optimization: {
     },
     plugins: [
-        // 在打包后的文件头插入一些banner信息，官方插件：
-        // https://webpack.js.org/plugins/banner-plugin/
         new webpack.BannerPlugin({
-            // 是否仅在入口包中输出 banner 信息
             entryOnly: true,
-            // 保持原样
             raw: true,
             banner: () => {
-                // 渲染文件头，目前只支持这些变量，有点丑，先凑活着用...
                 let userscriptHeaders = fs.readFileSync("./userscript-headers.js").toString("utf-8");
                 userscriptHeaders = userscriptHeaders.replaceAll("${name}", webpackPackageJson["name"] || "");
                 userscriptHeaders = userscriptHeaders.replaceAll("${namespace}", webpackPackageJson["namespace"] || "");
@@ -39,6 +33,11 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.tsx?$/,  // 添加 TypeScript 文件的支持
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             },
@@ -51,5 +50,8 @@ module.exports = {
                 use: ['file-loader']
             }
         ]
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],  // 添加 .ts 和 .tsx 扩展名
     }
 };
