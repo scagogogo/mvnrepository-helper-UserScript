@@ -31,13 +31,13 @@ async function resolveJarJdkVersion(groupId, artifactId, version, elementId, jar
 
         // 从缓存中展示manifest信息
         let {key, value} = parseBuildJdkVersion(jarInformation.manifest);
-        showJarManifestAnalyzeResult(elementId, jarInformation.manifest, key, value);
+        await showJarManifestAnalyzeResult(elementId, jarInformation.manifest, key, value);
 
         // 从缓存中展示class信息
-        showAnalyzeJarClassResult(elementId, jarInformation.metric, jarInformation.maxMajorVersion, jarInformation.maxMinorVersion);
+        await showAnalyzeJarClassResult(elementId, jarInformation.metric, jarInformation.maxMajorVersion, jarInformation.maxMinorVersion);
     } else {
         // 请求Jar文件
-        requestAndAnalyzeJarFile(groupId, artifactId, version, elementId, jarUrl);
+        await requestAndAnalyzeJarFile(groupId, artifactId, version, elementId, jarUrl);
     }
 }
 
@@ -65,37 +65,77 @@ async function isJarInformationCacheValid(jarInformation) {
  * @returns {Promise<void>}
  */
 async function requestAndAnalyzeJarFile(groupId, artifactId, version, elementId, jarUrl) {
+    try {
+        if (!jarUrl) {
+            jarUrl = buildJarUrl(groupId, artifactId, version);
+        }
 
-    // 如果没有传递Jar包的URL的时候，则尝试拼接默认的Jar包地址
-    if (!jarUrl) {
-        jarUrl = buildJarUrl(groupId, artifactId, version);
+        // 创建进度更新通道
+        const progressChannel = new EventTarget();
+        let lastProgress = 0;
+
+        // 包装为Promise
+        const response = await new Promise((resolve, reject) => {
+            // 进度处理（带节流）
+            const handleProgress = (progress) => {
+                const now = Date.now();
+                if (now - lastProgress > 100) { // 每100ms更新一次
+                    showRequestJarProgress(elementId)(progress);
+                    lastProgress = now;
+                }
+            };
+
+            // 请求配置
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: jarUrl,
+                responseType: "arraybuffer",
+                onload: (response) => {
+                    progressChannel.removeEventListener('progress', handleProgress);
+                    resolve(response);
+                },
+                onerror: (error) => {
+                    progressChannel.removeEventListener('progress', handleProgress);
+                    reject(error);
+                },
+                onprogress: (progress) => {
+                    const event = new CustomEvent('progress', { detail: progress });
+                    progressChannel.dispatchEvent(event);
+                }
+            });
+
+            // 监听进度事件
+            progressChannel.addEventListener('progress', handleProgress);
+        });
+
+        // 同步执行分析
+        await analyzeJarFile(groupId, artifactId, version, elementId)(response);
+
+    } catch (error) {
+        showRequestJarFailedMessage(elementId, jarUrl)(error);
+        throw error; // 向上传递错误
     }
-
-    // 使用GM_xmlhttpRequest下载JAR文件
-    GM_xmlhttpRequest({
-        method: "GET",
-        url: jarUrl,
-        responseType: "arraybuffer",
-        onload: analyzeJarFile(groupId, artifactId, version, elementId),
-        onerror: showRequestJarFailedMessage(elementId, jarUrl),
-        onprogress: await showRequestJarProgress(elementId),
-    });
 }
 
 function analyzeJarFile(groupId, artifactId, version, elementId) {
-    return response => {
-
+    return async (response) => {
         removeRequestJarProgress(elementId);
 
         if (response.status === 200) {
-            const jarFile = new JSZip(response.response);
-            // 异步梳理
-            (async () => {
+            try {
+                const jarFile = new JSZip(response.response);
+
+                // 同步执行解析流程
                 await analyzeManifest(groupId, artifactId, version, elementId, jarFile);
                 await analyzeJar(groupId, artifactId, version, elementId, jarFile);
-            })();
+
+            } catch (parseError) {
+                await showErrorMsg(elementId, `解析JAR文件失败: ${parseError.message}`);
+                throw parseError;
+            }
         } else {
-            showErrorMsg(elementId, "download jar file error, response status " + response.status);
+            await showErrorMsg(elementId, `下载失败 HTTP ${response.status}`);
+            throw new Error(`HTTP ${response.status}`);
         }
     };
 }

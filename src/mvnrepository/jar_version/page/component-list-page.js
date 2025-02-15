@@ -8,6 +8,10 @@ const {
     findRepoInformation,
     RepoInformation, saveRepoInformation
 } = require("../../../database/repo-information-storage");
+const {PromiseThreadPool} = require("./PromiseThreadPool");
+const {sleep} = require("../../../utils/sleep-util");
+const {findSettings, Settings} = require("../../../database/Settings");
+const {Logger, logger} = require("../../../logger/Logger");
 
 
 /**
@@ -52,6 +56,11 @@ async function addTableValue(tableElt) {
 
     const {groupId, artifactId} = parseGroupIdAndArtifactId();
 
+    // 通过一个模拟的线程池来控制并发
+    const settings = await findSettings() || new Settings();
+    logger.debug(`目前设置的并发数是：${settings.concurrency}`);
+    const threadPool = new PromiseThreadPool(settings.concurrency);
+
     $(tableElt).find('tbody tr td').each((index, element) => {
 
         // 寻找到版本详情页的链接，围绕着这个链接修改页面布局
@@ -69,7 +78,10 @@ async function addTableValue(tableElt) {
             return "<td id=" + id + "></td>";
         });
 
-        processSingle(groupId, artifactId, version, id, repoDetailPageRequestPath);
+        threadPool.submit(async () => {
+                return await processSingle(groupId, artifactId, version, id, repoDetailPageRequestPath);
+            }
+        );
 
     });
 
@@ -86,35 +98,45 @@ async function addTableValue(tableElt) {
  * @returns {Promise<void>}
  */
 async function processSingle(groupId, artifactId, version, id, repoDetailPageRequestPath) {
-
-    const repoInformation = await findRepoInformation(repoDetailPageRequestPath);
-    if (repoInformation) {
-        const jarUrl = repoInformation.baseUrl + buildGavJarPath(groupId, artifactId, version);
-        await resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
-        return;
-    }
-
-    // 发送请求，拿详情页的仓库地址
-    $.ajax({
-        url: repoDetailPageRequestPath,
-        type: "GET",
-        success: function (data) {
-            const repoBaseUrl = $(data).find(".im-subtitle").text();
-
-            // 保存一下仓库信息
-            const repoInformation = new RepoInformation()
-            repoInformation.id = repoDetailPageRequestPath;
-            repoInformation.baseUrl = repoBaseUrl;
-            saveRepoInformation(repoInformation);
-
-            const jarUrl = repoBaseUrl + buildGavJarPath(groupId, artifactId, version);
-            resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
-        },
-        error: function (error) {
-            // 请求失败时的回调函数
-            console.error(error);
+    try {
+        // 第一步：检查仓库信息
+        const repoInformation = await findRepoInformation(repoDetailPageRequestPath);
+        if (repoInformation) {
+            const jarUrl = repoInformation.baseUrl + buildGavJarPath(groupId, artifactId, version);
+            // 等待版本解析完成
+            await resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
+            return;
         }
-    });
+
+        // 第二步：获取仓库详情（完全异步等待）
+        const data = await new Promise((resolve, reject) => {
+            $.ajax({
+                url: repoDetailPageRequestPath,
+                type: "GET",
+                success: resolve,
+                error: reject
+            });
+        });
+
+        // 第三步：解析并保存仓库信息
+        const repoBaseUrl = $(data).find(".im-subtitle").text();
+        const repoInfo = new RepoInformation();
+        repoInfo.id = repoDetailPageRequestPath;
+        repoInfo.baseUrl = repoBaseUrl;
+        await saveRepoInformation(repoInfo);  // 等待存储完成
+
+        // 第四步：解析JDK版本
+        const jarUrl = repoBaseUrl + buildGavJarPath(groupId, artifactId, version);
+        await resolveJarJdkVersion(groupId, artifactId, version, id, jarUrl);
+
+    } catch (error) {
+        console.error(`[${version}] 处理失败:`, error);
+        $(`#${id}`).html(`
+            <span style="color: red">请求失败</span>
+            <div style="font-size: 0.8em;color: #666">${error.status || '未知错误'}</div>
+        `);
+        throw error; // 向上抛出错误以触发线程池的重试机制
+    }
 }
 
 /**

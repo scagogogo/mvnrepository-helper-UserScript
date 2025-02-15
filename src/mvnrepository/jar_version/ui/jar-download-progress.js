@@ -6,8 +6,8 @@
  * @param taskId
  * @returns {(function(*))|*}
  */
-async function showRequestJarProgress(taskId) {
-    const id = await buildJarDownloadProgressElementId(taskId);
+function showRequestJarProgress(taskId) {
+    const id = buildJarDownloadProgressElementId(taskId);
     const showProgressElt = document.createElement('div');
     showProgressElt.id = id;
     document.getElementById(taskId).appendChild(showProgressElt);
@@ -42,10 +42,9 @@ async function showRequestJarProgress(taskId) {
  * 从界面上删除进度相关信息
  *
  * @param taskId
- * @returns {Promise<void>}
  */
-async function removeRequestJarProgress(taskId) {
-    const id = await buildJarDownloadProgressElementId(taskId);
+function removeRequestJarProgress(taskId) {
+    const id = buildJarDownloadProgressElementId(taskId);
     const element = document.getElementById(id);
     if (!element) {
         return;
@@ -56,9 +55,9 @@ async function removeRequestJarProgress(taskId) {
 /**
  *
  * @param taskId
- * @returns {Promise<string>}
+ * @returns {string}
  */
-async function buildJarDownloadProgressElementId(taskId) {
+function buildJarDownloadProgressElementId(taskId) {
     return taskId + "-jar-download-progress";
 }
 

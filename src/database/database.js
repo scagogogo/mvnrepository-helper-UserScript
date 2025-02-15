@@ -7,6 +7,9 @@ let database;
 
 const DATABASE_NAME = "mvnrepository-helper-UserScript";
 
+// 2025-02-15 16:33:50 数据库的结构变更的时候，此处的版本号要随之增加
+const DATABASE_SCHEMA_VERSION = 3;
+
 /**
  * 初始化数据库
  *
@@ -14,13 +17,16 @@ const DATABASE_NAME = "mvnrepository-helper-UserScript";
  */
 async function initDatabase() {
     try {
-        database = await openDB(DATABASE_NAME, 2, {
+        database = await openDB(DATABASE_NAME, DATABASE_SCHEMA_VERSION, {
             upgrade(database, oldVersion, newVersion, transaction, event) {
                 if (!database.objectStoreNames.contains("gav-jar-information-storage")) {
                     database.createObjectStore("gav-jar-information-storage", {keyPath: "id"});
                 }
                 if (!database.objectStoreNames.contains("repo-information-storage")) {
                     database.createObjectStore("repo-information-storage", {keyPath: "id"});
+                }
+                if (!database.objectStoreNames.contains("settings")) {
+                    database.createObjectStore("settings", {keyPath: "id"});
                 }
             }
         });
