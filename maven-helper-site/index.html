@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/mvnrepository-helper-UserScript/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maven中央仓库助手 - 官方网站</title>
+    <script type="text/javascript">
+      // 检查会话存储中是否有需要重定向的路径
+      (function() {
+        var redirectPath = sessionStorage.getItem('redirectPath');
+        if (redirectPath) {
+          // 清除会话存储中的路径
+          sessionStorage.removeItem('redirectPath');
+          // 使用history API更新路径，而不刷新页面
+          history.replaceState(null, null, redirectPath);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # 触发分支
+    paths:
+      - 'maven-helper-site/**'  # 只有网站代码变更时触发
 
 jobs:
   deploy:
@@ -12,10 +14,26 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: maven-helper-site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: maven-helper-site
+        run: npm ci
+
+      - name: Build website
+        working-directory: maven-helper-site
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./website
+          publish_dir: ./maven-helper-site/dist  # 发布构建后的dist目录
+          commit_message: 'deploy: update site'

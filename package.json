@@ -1,6 +1,6 @@
 {
   "name": "mvnrepository-helper-UserScript",
-  "version": "0.4",
+  "version": "0.5",
   "description": "this is userscript's description",
   "main": "index.js",
   "repository": "https://github.com/scagogogo/mvnrepository-helper-UserScript",
@@ -13,13 +13,19 @@
   "author": "CC11001100 <CC11001100@qq.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/greasemonkey": "^4.0.7",
+    "@types/jszip": "^3.4.0",
+    "current-script-polyfill": "^1.0.0",
+    "idb": "^8.0.0",
+    "jszip": "2.7.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.9.0",
-    "jszip": "2.7.0",
-    "idb": "^8.0.0",
-    "current-script-polyfill": "^1.0.0"
+    "webpack-merge": "^5.9.0"
   },
   "dependencies": {
+    "@types/jquery": "^3.5.32",
+    "jquery": "^3.7.1"
   }
 }
