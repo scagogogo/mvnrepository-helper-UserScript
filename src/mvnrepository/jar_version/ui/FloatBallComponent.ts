@@ -34,7 +34,7 @@ export default class FloatBallComponent {
     private input!: HTMLInputElement;
 
     constructor(options: FloatBallOptions = {}) {
-        this.concurrency = options.defaultConcurrency || 3;
+        this.concurrency = options.defaultConcurrency || 1;
         this.onSave = options.onSave || null;
         this.refreshInterval = null;
         this.initStyles();
@@ -113,21 +113,27 @@ export default class FloatBallComponent {
       }
 
       .float-ball-close-btn {
-        width: 20px;
-        height: 20px;
-        background: none;
-        border: none;
+        width: 30px;
+        height: 30px;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 50%;
         cursor: pointer;
         position: absolute;
-        top: -5px;
-        right: 0;
-        font-size: 12px;
+        top: -10px;
+        right: -10px;
+        font-size: 18px;
         color: #666;
-        transition: color 0.3s;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .float-ball-close-btn:hover {
+        background: #eee;
         color: #333;
+        transform: scale(1.1);
       }
 
       .float-ball-alert {
@@ -240,9 +246,19 @@ export default class FloatBallComponent {
         this.dialog.querySelector('button.float-ball-close-btn')!.addEventListener('click', () => this.closeDialog());
         this.dialog.querySelector('button.float-ball-confirm-btn')!.addEventListener('click', () => this.closeDialog());
 
-        this.input.addEventListener('input', () => this.validateInput());
+        this.input.addEventListener('blur', () => this.validateInput());
         this.input.addEventListener('keypress', (e: KeyboardEvent) => {
-            if (e.key === 'Enter') this.closeDialog();
+            // 仅允许输入数字和控制键
+            if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
+                e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && 
+                e.key !== 'Tab' && e.key !== 'Enter') {
+                e.preventDefault();
+            }
+            
+            if (e.key === 'Enter') {
+                this.validateInput();
+                this.closeDialog();
+            }
         });
 
         this.dialog.querySelector('.float-ball-clear-btn')!.addEventListener('click', () => {
@@ -254,9 +270,19 @@ export default class FloatBallComponent {
 
     /** 输入验证逻辑 */
     private validateInput(): void {
-        let value = this.input.value.replace(/[^0-9]/g, '');
-        value = value === '' ? '1' : Math.max(1, parseInt(value)).toString();
-        this.input.value = value;
+        const inputValue = this.input.value.replace(/[^0-9]/g, '');
+        
+        if (!inputValue || isNaN(parseInt(inputValue))) {
+            this.input.value = '1';
+            return;
+        }
+        
+        const numValue = parseInt(inputValue);
+        if (numValue < 1) {
+            this.input.value = '1';
+        } else {
+            this.input.value = numValue.toString();
+        }
     }
 
     /** 打开设置对话框 */

@@ -34,11 +34,14 @@
  * ```
  */
 
+import {logger} from "../../../logger/Logger";
+
 export default class PromiseThreadPool {
     private maxConcurrency: number; // 最大并发数
     private activeCount: number;    // 当前活跃任务数
     private queue: Array<() => Promise<any>>; // 任务队列
     private paused: boolean;        // 是否暂停
+    private maxActiveCount: number; // 记录最大实际并发数
 
     /**
      * 构造函数
@@ -47,6 +50,7 @@ export default class PromiseThreadPool {
     constructor(maxConcurrency: number) {
         this.maxConcurrency = maxConcurrency;
         this.activeCount = 0;
+        this.maxActiveCount = 0; // 初始化最大并发记录
         this.queue = [];
         this.paused = false;
     }
@@ -56,22 +60,32 @@ export default class PromiseThreadPool {
      * @param task 任务，可以是Promise对象、返回Promise的函数或async函数
      * @returns Promise<any> 任务的Promise
      */
-    public submit(task: () => Promise<any>): Promise<any> {
+    public submit<T>(task: (() => Promise<T>) | Promise<T>): Promise<T> {
         return new Promise((resolve, reject) => {
             const wrappedTask = async () => {
                 try {
-                    const result = await task(); // 直接执行函数获取Promise
+                    // 更新并发高水位
+                    if (this.activeCount > this.maxActiveCount) {
+                        this.maxActiveCount = this.activeCount;
+                    }
+                    
+                    // 判断task是Promise对象还是返回Promise的函数
+                    const result = typeof task === 'function' 
+                        ? await (task as () => Promise<T>)() 
+                        : await (task as Promise<T>);
                     resolve(result);
                 } catch (error) {
                     reject(error);
                 } finally {
                     this.activeCount--;
-                    this._next();
+                    // 关键修改：使用setTimeout确保异步执行_next，避免调用栈过深
+                    setTimeout(() => this._next(), 0);
                 }
             };
 
             this.queue.push(wrappedTask);
-            !this.paused && this._next();
+            // 关键修改：使用setTimeout确保异步执行_next，避免在大量任务提交时阻塞
+            !this.paused && setTimeout(() => this._next(), 0);
         });
     }
 
@@ -80,11 +94,27 @@ export default class PromiseThreadPool {
      * @private
      */
     private _next(): void {
-        while (this.activeCount < this.maxConcurrency && this.queue.length > 0) {
-            this.activeCount++;
+        // 添加更明确的日志，记录每次尝试启动新任务的情况
+        logger.debug(`[PromiseThreadPool] 尝试启动任务: 当前活跃数=${this.activeCount}, 最大并发=${this.maxConcurrency}, 队列长度=${this.queue.length}`);
+        
+        // 每次调用只启动一个任务，避免while循环导致的连续同步执行
+        if (this.activeCount < this.maxConcurrency && this.queue.length > 0) {
             const task = this.queue.shift();
-            task!().catch(() => {
-            }); // 防止未处理的rejection
+            this.activeCount++;
+            logger.debug(`[PromiseThreadPool] 启动新任务: 当前活跃数=${this.activeCount}, 最大并发=${this.maxConcurrency}, 队列长度=${this.queue.length}`);
+            
+            // 使用Promise.resolve确保任务在微任务队列中执行
+            Promise.resolve().then(() => {
+                return task!().catch(() => {
+                    // 防止未处理的rejection
+                });
+            });
+            
+            // 如果还有任务可以执行，则继续启动
+            if (this.activeCount < this.maxConcurrency && this.queue.length > 0) {
+                // 递归调用但使用setTimeout避免调用栈过深
+                setTimeout(() => this._next(), 0);
+            }
         }
     }
 
@@ -123,13 +153,20 @@ export default class PromiseThreadPool {
      * 获取线程池状态
      * @returns {object} 线程池状态，包含running、waiting、maxConcurrency和paused
      */
-    public get status(): { running: number; waiting: number; maxConcurrency: number; paused: boolean } {
+    public get status(): { running: number; waiting: number; maxConcurrency: number; paused: boolean; maxActive: number } {
         return {
             running: this.activeCount,
             waiting: this.queue.length,
             maxConcurrency: this.maxConcurrency,
-            paused: this.paused
+            paused: this.paused,
+            maxActive: this.maxActiveCount // 添加最高并发记录
         };
     }
 
+    /**
+     * 重置最大并发记录
+     */
+    public resetMaxActive(): void {
+        this.maxActiveCount = this.activeCount;
+    }
 }

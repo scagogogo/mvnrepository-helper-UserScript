@@ -7,7 +7,6 @@ import {RepoInformation, RepoInformationStorage} from "../../../database/RepoInf
 import PromiseThreadPool from "./PromiseThreadPool";
 import Settings from "../../../database/Settings";
 import {logger} from "../../../logger/Logger";
-import JarDownloadProgress from "../ui/JarDownloadProgress";
 
 /**
  * 组件版本列表页面增强处理器
@@ -69,9 +68,11 @@ export default class ComponentVersionListEnhancer {
 
         const settings = await Settings.findSettings() ?? new Settings();
         const threadNum = settings.concurrency || this.DEFAULT_CONCURRENCY;
-        logger.debug(`线程池并发：${threadNum}`);
+        logger.debug(`线程池初始化，最大并发数：${threadNum}`);
         const threadPool = new PromiseThreadPool(threadNum);
-
+        
+        let taskCount = 0;
+        
         table.find('tbody tr td').each((index, element) => {
             const versionLink = $(element).find('.vbtn');
             if (versionLink.length !== 1) return;
@@ -82,16 +83,30 @@ export default class ComponentVersionListEnhancer {
 
             $(element).after(`<td id="${cellId}"><div class="loading-spinner"></div></td>`);
 
-            threadPool.submit(() =>
-                this.processVersion(
-                    groupId,
-                    artifactId,
-                    version,
-                    cellId,
-                    repoPath ?? ""
-                )
-            );
+            taskCount++;
+            const taskId = `task-${taskCount}`;
+            logger.debug(`提交任务 ${taskId}：[${groupId}:${artifactId}:${version}]，当前队列状态: ${JSON.stringify(threadPool.status)}`);
+            
+            threadPool.submit(async () => {
+                logger.debug(`开始执行任务 ${taskId}：[${groupId}:${artifactId}:${version}]，当前线程池状态: ${JSON.stringify(threadPool.status)}`);
+                try {
+                    const result = await this.processVersion(
+                        groupId,
+                        artifactId,
+                        version,
+                        cellId,
+                        repoPath ?? ""
+                    );
+                    logger.debug(`任务 ${taskId} 完成：[${groupId}:${artifactId}:${version}]，当前线程池状态: ${JSON.stringify(threadPool.status)}`);
+                    return result;
+                } catch (error) {
+                    logger.error(`任务 ${taskId} 失败：[${groupId}:${artifactId}:${version}]，当前线程池状态: ${JSON.stringify(threadPool.status)}`);
+                    throw error;
+                }
+            });
         });
+        
+        logger.debug(`所有任务已提交，共 ${taskCount} 个任务，当前线程池状态: ${JSON.stringify(threadPool.status)}`);
     }
 
     /**
