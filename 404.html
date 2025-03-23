@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Maven中央仓库助手 - 页面重定向中</title>
+  <script type="text/javascript">
+    // 获取当前URL路径
+    var pathSegmentsToKeep = 1;
+    var l = window.location;
+    var pathname = l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/';
+    var redirectPath = pathname + l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/');
+    
+    // 保存原始访问路径到会话存储
+    sessionStorage.setItem('redirectPath', redirectPath);
+    
+    // 重定向到主页
+    window.location.href = pathname;
+  </script>
+</head>
+<body>
+  <h1>页面重定向中...</h1>
+  <p>如果页面没有自动跳转，请<a href="/mvnrepository-helper-UserScript/">点击这里</a>返回首页。</p>
+</body>
+</html> 
