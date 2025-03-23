@@ -122,11 +122,10 @@ export default class JarJdkVersionDetector {
             let lastProgress = 0;
 
             // 定义 handleProgress 函数
-            const jarDownloadProgress = new JarDownloadProgress(elementId);
             const handleProgress = (event: ProgressEvent): void => {
                 const progress = event as unknown as { loaded: number; total: number; lengthComputable: boolean };
                 if (Date.now() - lastProgress > 100) {
-                    jarDownloadProgress.showProgress(progress);
+                    new JarDownloadProgress(elementId).showProgress(progress);
                     lastProgress = Date.now();
                 }
             };
@@ -137,6 +136,7 @@ export default class JarJdkVersionDetector {
                 responseType: "arraybuffer",
                 onload: (response: GMXMLHttpRequestResponse): void => {
                     resolve(response);
+                    // new JarDownloadProgress(elementId).showProgress({ loaded: 0, total: 0, lengthComputable: true });
                 },
                 onerror: (error: Error): void => {
                     reject(error);
