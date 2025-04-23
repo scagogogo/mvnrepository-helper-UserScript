@@ -15,17 +15,82 @@ import ClipboardUtil from "../../../utils/ClipboardUtil";
  * @returns {Promise<void>}
  */
 export default class JarManifestAnalyzer {
+    /**
+     * 容器元素ID
+     * 
+     * @description
+     * 用于存放分析结果的DOM元素ID
+     * 
+     * @type {string}
+     */
     private elementId: string;
+    
+    /**
+     * Manifest内容
+     * 
+     * @description
+     * JAR文件的MANIFEST.MF文件内容
+     * 
+     * @type {string | null}
+     */
     private manifest: string | null;
+    
+    /**
+     * JDK标题
+     * 
+     * @description
+     * 从Manifest中提取的JDK信息标题，如"Build-Jdk"
+     * 
+     * @type {string | null}
+     */
     private jdkTitle: string | null;
+    
+    /**
+     * JDK版本
+     * 
+     * @description
+     * 从Manifest中提取的JDK版本值，如"1.8.0_202"
+     * 
+     * @type {string | null}
+     */
     private jdkVersion: string | null;
 
     /**
      * 构造函数
-     * @param elementId 容器元素的 ID
-     * @param manifest Manifest 内容
-     * @param jdkTitle JDK 标题
-     * @param jdkVersion JDK 版本
+     * 
+     * @description
+     * 功能描述：
+     * 创建一个新的JAR文件Manifest分析器实例，用于展示JAR包构建环境信息。
+     * 
+     * 适用场景：
+     * - 需要展示和分析JAR文件的MANIFEST.MF内容
+     * - 显示JAR包编译环境信息
+     * 
+     * 边界条件：
+     * - 任何参数都可能为null，方法内部会处理这些情况
+     * - elementId必须是页面上已存在的元素
+     * 
+     * @param {string} elementId - 容器元素的ID，分析结果将在此元素内显示
+     * @param {string | null} manifest - JAR包的MANIFEST.MF文件内容，可以为null表示不存在
+     * @param {string | null} jdkTitle - JDK信息的标题，如"Build-Jdk"，可以为null
+     * @param {string | null} jdkVersion - JDK版本值，如"1.8.0_202"，可以为null
+     * 
+     * @example
+     * // 创建分析器实例
+     * const analyzer = new JarManifestAnalyzer(
+     *   "results-container",
+     *   manifestContent,
+     *   "Build-Jdk",
+     *   "11.0.7"
+     * );
+     * 
+     * // 创建一个处理不存在Manifest的分析器
+     * const emptyAnalyzer = new JarManifestAnalyzer(
+     *   "results-container",
+     *   null,
+     *   null,
+     *   null
+     * );
      */
     constructor(elementId: string, manifest: string | null, jdkTitle: string | null, jdkVersion: string | null) {
         this.elementId = elementId;
@@ -36,7 +101,43 @@ export default class JarManifestAnalyzer {
 
     /**
      * 展示 Jar 文件的 Manifest 分析结果
-     * @returns {Promise<void>}
+     * 
+     * @description
+     * 功能描述：
+     * 在指定容器中展示JAR文件MANIFEST.MF的分析结果，包括JDK构建信息。
+     * 创建可交互的元素，支持鼠标悬停查看完整Manifest内容，点击复制内容。
+     * 
+     * 适用场景：
+     * - 展示JAR包构建信息
+     * - 提供完整Manifest内容的查看渠道
+     * - 方便用户复制Manifest信息
+     * 
+     * 边界条件：
+     * - 依赖DOM操作，需要在浏览器环境中使用
+     * - manifest为null时会显示"meta file not found"提示
+     * - jdkTitle或jdkVersion为null时会显示"build information not found"提示
+     * - 使用绝对定位创建悬浮提示框
+     * 
+     * @returns {Promise<void>} 无返回值的Promise，操作完成后resolve
+     * 
+     * @example
+     * // 创建分析器并展示结果
+     * const analyzer = new JarManifestAnalyzer(
+     *   "container-id",
+     *   "Manifest-Version: 1.0\nBuild-Jdk: 1.8.0_292",
+     *   "Build-Jdk",
+     *   "1.8.0_292"
+     * );
+     * await analyzer.showJarManifestAnalyzeResult();
+     * 
+     * // 处理不存在Manifest的情况
+     * const emptyAnalyzer = new JarManifestAnalyzer(
+     *   "container-id",
+     *   null,
+     *   null,
+     *   null
+     * );
+     * await emptyAnalyzer.showJarManifestAnalyzeResult();
      */
     public async showJarManifestAnalyzeResult(): Promise<void> {
         const manifestId = this.buildManifestId(this.elementId);
@@ -113,8 +214,24 @@ export default class JarManifestAnalyzer {
 
     /**
      * 构建 Manifest 元素的 ID
-     * @param elementId 容器元素的 ID
-     * @returns 唯一的 Manifest 元素 ID
+     * 
+     * @description
+     * 功能描述：
+     * 生成用于存放Manifest分析结果的DOM元素ID。
+     * 根据容器元素ID创建唯一的子元素ID。
+     * 
+     * 适用场景：
+     * - 内部使用，生成唯一的DOM元素ID
+     * - 确保不同分析结果之间不会ID冲突
+     * 
+     * 边界条件：
+     * - 依赖elementId的唯一性
+     * 
+     * @param {string} elementId - 容器元素ID
+     * 
+     * @returns {string} 生成的Manifest元素ID
+     * 
+     * @private 内部辅助方法，不应由外部直接调用
      */
     private buildManifestId(elementId: string): string {
         return elementId + "-manifest-analyze-result";

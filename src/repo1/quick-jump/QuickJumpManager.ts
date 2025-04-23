@@ -1,9 +1,51 @@
+import $ from "jquery";
 import HistoryManager from "./HistoryManager";
 
 /**
  * 在页面上添加快速跳转
  */
 export default class QuickJumpManager {
+    /**
+     * 在页面上添加Maven构件快速跳转功能
+     * 
+     * @description
+     * 功能描述：
+     * 1. 在页面上动态创建一个表单，包含GroupID、ArtifactID和Version三个输入字段
+     * 2. 为表单添加提交按钮和相关事件处理
+     * 3. 根据用户输入构建Maven仓库URL并进行跳转
+     * 4. 支持多种输入格式解析，包括标准格式和冒号分隔的shorthand格式
+     * 5. 整合历史记录功能，保存和恢复用户输入
+     * 
+     * 适用场景：
+     * - 需要快速跳转到Maven仓库中特定构件的页面
+     * - 用户经常访问不同的Maven构件，需要便捷的导航工具
+     * - 作为开发工具的辅助功能，提高Maven仓库浏览效率
+     * 
+     * 边界条件：
+     * - 依赖jQuery库进行DOM操作
+     * - 依赖HistoryManager来实现历史记录功能
+     * - 应在DOM加载完成后调用
+     * - URL格式为标准的Maven仓库URL结构
+     * 
+     * 异常处理：
+     * - 对缺少必要参数的情况进行验证和提示
+     * - 对参数格式错误进行检查并提示用户
+     * 
+     * 使用示例：
+     * ```typescript
+     * // 在页面加载完成后添加快速跳转功能
+     * $(document).ready(() => {
+     *   QuickJumpManager.addQuickJump();
+     * });
+     * 
+     * // 或在特定时机添加
+     * $("#add-helper-button").click(() => {
+     *   QuickJumpManager.addQuickJump();
+     * });
+     * ```
+     * 
+     * @returns {void} 此方法无返回值
+     */
     static addQuickJump(): void {
         // 在页面上添加快速跳转的表单
         const btnHtml = `
@@ -31,7 +73,7 @@ export default class QuickJumpManager {
         $("body").append($(btnHtml));
 
         // 绑定事件
-        $("#go").click((e) => {
+        $("#go").click((e: JQuery.ClickEvent) => {
             // 从页面元素中获取输入值
             let groupId: string | null = null;
             let articleId: string | null = null;
@@ -107,7 +149,7 @@ The value ${groupId} you input does not conform to any of the above formats
         });
 
         // 在输入的时候随时能够按回车也跳转
-        $("#group_id,#article_id,#version").keyup((e) => {
+        $("#group_id,#article_id,#version").keyup((e: JQuery.KeyUpEvent) => {
             if (e.keyCode === 13) {
                 $("#go").click();
             }
